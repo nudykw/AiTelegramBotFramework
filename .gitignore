@@ -1,0 +1,69 @@
+# Environment secrets — real keys, never commit
+.env
+Configs/appsettings.json
+Configs/appsettings.web.json
+Configs/appsettings.console.json
+Configs/appsettings.Test.json
+Configs/cloudbeaver.runtime.conf
+Configs/git_info.json
+# Configs/appsettings.sample.json is intentionally tracked (no real keys)
+# Configs/appsettings.Test.json.example is intentionally tracked (no real keys)
+
+
+/.vs
+bin/
+obj/
+TelegramBotApp/Properties/PublishProfiles/FolderProfile.pubxml.user
+TelegramBotApp/StoreContext.db
+TelegramBotApp/bot.db
+/.vscode
+appsettings.json
+TelegramBotApp/Properties/PublishProfiles/FolderProfile.pubxml
+TelegramBotApp/Properties/PublishProfiles/FolderProfile.pubxml.user
+TelegramBotApp/Publish.cmd
+TelegramBotApp/Publish.sh
+build_output.txt
+integration_results.txt
+integration_tests_output.txt
+tmp/
+*.db-journal
+*.db-wal
+*.db-shm
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+test_output.txt
+todo.txt
+test_output.txt
+
+# Local AI Agent (codegraph & mcp-gateway)
+.agent/node_modules/
+.agent/*.log
+.agent/database.db/
+database.db/
+.codegraph/
+scratch/
+
+
+mcp-uploads/client_secret_480212867421-4p557dm16oqk0o410bhl0j22iqc3cls0.apps.googleusercontent.com.json
+mcp-uploads/credentials.json
+
+# Google Drive MCP Server credentials
+.secrets/
+
+# Temporary / history logs
+history.txt
+

@@ -1,0 +1,319 @@
+# =============================================================================
+# AiTelegramBotFramework — Docker Compose
+# =============================================================================
+# All secrets and ports are loaded from the .env file (see .env.example).
+#
+# Activate services with COMPOSE_PROFILES in .env:
+#   postgres,cloudbeaver  — PostgreSQL + CloudBeaver + Bot
+#   postgres              — PostgreSQL + Bot
+#   aspire                — .NET Aspire Dashboard (metrics/traces/logs UI)
+#                           Also enables: OTel Collector (DB metrics) + CloudBeaver Java agent
+#   nginx                 — Nginx reverse proxy (single public URL for bot + CloudBeaver)
+#                           /              → Bot  |  /cloudbeaver/ → CloudBeaver
+# =============================================================================
+
+services:
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # DATABASES
+  # ──────────────────────────────────────────────────────────────────────────
+
+  postgres:
+    profiles: ["postgres"]
+    image: postgres:17-alpine
+    container_name: gpt_bot_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${POSTGRES_DB}
+      POSTGRES_USER:     ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://127.0.0.1:5140"
+        tag: "{{.Name}}"
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # BOT — Web application (TelegramBotWebApp)
+  # ──────────────────────────────────────────────────────────────────────────
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: gpt_telegram_bot
+    user: root
+    restart: unless-stopped
+    ports:
+      - "${BOT_PORT:-8080}:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./mcp-uploads:/app/mcp-uploads
+      - ./.secrets:/app/.secrets
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://127.0.0.1:5140"
+        tag: "{{.Name}}"
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+      ASPNETCORE_URLS: "http://+:8080"
+      SWAGGER_ENABLED: ${SWAGGER_ENABLED:-false}
+      # Telemetry → Aspire Dashboard (only effective when aspire profile is active)
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+      # Telegram
+      AppSettings__TelegramBotConfiguration__BotToken:   ${TELEGRAM_BOT_TOKEN}
+      AppSettings__TelegramBotConfiguration__OwnerId:    ${TELEGRAM_OWNER_ID}
+      AppSettings__TelegramBotConfiguration__BaseApiUrl: ${TELEGRAM_BASE_API_URL:-}
+      AppSettings__TelegramBotConfiguration__DashboardBaseUrl: ${TELEGRAM_DASHBOARD_BASE_URL:-}
+      # Database
+      AppSettings__Database__Provider:          ${DB_PROVIDER}
+      AppSettings__Database__ConnectionString:  ${DB_CONNECTION_STRING}
+      # Background Scheduler (Hangfire)
+      AppSettings__Scheduler__Enabled:                  ${SCHEDULER_ENABLED:-true}
+      # Google Drive Settings
+      AppSettings__GoogleDriveSettings__AuthType:              ${AppSettings__GoogleDriveSettings__AuthType:-OAuth}
+      AppSettings__GoogleDriveSettings__ServiceAccountKeyPath:  ${AppSettings__GoogleDriveSettings__ServiceAccountKeyPath:-.secrets/.credentials.json}
+      AppSettings__GoogleDriveSettings__ClientSecretsPath:      ${AppSettings__GoogleDriveSettings__ClientSecretsPath:-.secrets/.gdrive-server-credentials.json}
+      AppSettings__GoogleDriveSettings__TokenStorePath:         ${AppSettings__GoogleDriveSettings__TokenStorePath:-.secrets/token_store}
+      # Long-term memory (Qdrant RAG)
+      AppSettings__MemorySettings__Enabled:             ${MEMORY_ENABLED:-true}
+      AppSettings__MemorySettings__VectorDbUrl:         ${MEMORY_VECTOR_DB_URL:-http://qdrant:6334}
+      AppSettings__MemorySettings__ProviderName:        ${MEMORY_PROVIDER:-Gemini}
+      AppSettings__MemorySettings__ModelName:           ${MEMORY_MODEL:-text-embedding-004}
+      AppSettings__MemorySettings__SimilarityThreshold: ${MEMORY_SIMILARITY_THRESHOLD:-0.5}
+      # AI provider keys — override placeholder values from appsettings.sample.json.
+      # Index order must match ChatProviders array in Configs/appsettings.sample.json:
+      #   0=OpenAI  1=Gemini  2=Grok  3=DeepSeek
+      AppSettings__TelegramBotConfiguration__AiSettings__ChatProviders__0__ApiKey: ${OPENAI_API_KEY:-}
+      AppSettings__TelegramBotConfiguration__AiSettings__ChatProviders__1__ApiKey: ${GEMINI_API_KEY:-}
+      AppSettings__TelegramBotConfiguration__AiSettings__ChatProviders__2__ApiKey: ${GROK_API_KEY:-}
+      AppSettings__TelegramBotConfiguration__AiSettings__ChatProviders__3__ApiKey: ${DEEPSEEK_API_KEY:-}
+      # Dashboard — active profiles & ports (used to build service links on the dashboard page)
+      COMPOSE_PROFILES:        ${COMPOSE_PROFILES:-}
+      BOT_PORT:                ${BOT_PORT:-8080}
+      CLOUDBEAVER_PORT:        ${CLOUDBEAVER_PORT:-8978}
+      ASPIRE_PORT:             ${ASPIRE_PORT:-18888}
+      CLOUDBEAVER_PUBLIC_URL:  ${CLOUDBEAVER_PUBLIC_URL:-}
+      ASPIRE_PUBLIC_URL:       ${ASPIRE_PUBLIC_URL:-}
+      MCP_RUNTIME_CONTAINER:   gpt_mcp_runtime
+    depends_on:
+      postgres:
+        condition: service_healthy
+        required: false
+      aspire-dashboard:
+        condition: service_started
+        required: false
+      mcp-runtime:
+        condition: service_started
+        required: false
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 120s
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # ASPIRE DASHBOARD — Metrics / Traces / Logs UI  (optional, profile: aspire)
+  # ──────────────────────────────────────────────────────────────────────────
+
+  aspire-dashboard:
+    profiles: ["aspire"]
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:latest
+    container_name: gpt_aspire_dashboard
+    restart: unless-stopped
+    ports:
+      - "${ASPIRE_PORT:-18888}:18888"   # Browser UI
+      - "18889:18889"                    # OTLP/gRPC — receives telemetry from all services
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://127.0.0.1:5140"
+        tag: "{{.Name}}"
+    environment:
+      # Allow anonymous access (safe for local dev; remove for production)
+      DASHBOARD__FRONTEND__AUTHMODE:    Unsecured
+      DASHBOARD__OTLP__AUTHMODE:        Unsecured
+      DASHBOARD__API__DISABLED:         "false"
+      DASHBOARD__API__AUTHMODE:         Unsecured
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # OTEL COLLECTOR — Collects DB metrics → Aspire Dashboard  (profile: aspire)
+  # ──────────────────────────────────────────────────────────────────────────
+
+  otelcol:
+    profiles: ["aspire"]
+    image: otel/opentelemetry-collector-contrib:0.153.0
+    container_name: gpt_otelcol
+    restart: unless-stopped
+    ports:
+      - "5140:5140/udp"
+    volumes:
+      - ./otel/otelcol-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    # Do not use syslog for the collector itself to prevent log loop & clogging the Aspire Dashboard with expected DB scraper errors
+    environment:
+      # PostgreSQL credentials (used by postgresql receiver)
+      POSTGRES_USER:     ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-unused_placeholder}
+      POSTGRES_DB:       ${POSTGRES_DB:-gpt_chat_bot}
+    depends_on:
+      aspire-dashboard:
+        condition: service_started
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # OTEL JAVA AGENT INIT — Downloads OTel Java agent for CloudBeaver
+  # ──────────────────────────────────────────────────────────────────────────
+
+  otel-agent-init:
+    profiles: ["aspire", "cloudbeaver"]
+    image: alpine:latest
+    container_name: gpt_otel_agent_init
+    restart: no
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://127.0.0.1:5140"
+        tag: "{{.Name}}"
+    # Download the OTel Java agent once into a named volume.
+    # Skip if already present (file size > 1MB means valid jar).
+    command: >
+      sh -c '
+        JAR=/otel-agent/opentelemetry-javaagent.jar;
+        URL=https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.13.3/opentelemetry-javaagent.jar;
+        if [ -f "$$JAR" ] && [ $$(wc -c < "$$JAR") -gt 1000000 ]; then
+          echo "OTel Java agent already present, skipping download.";
+        else
+          echo "Downloading OTel Java agent...";
+          wget -O "$$JAR" "$$URL";
+        fi
+      '
+    volumes:
+      - otel_agent_jar:/otel-agent
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # CLOUDBEAVER — Web database manager (optional, profile: cloudbeaver)
+  # ──────────────────────────────────────────────────────────────────────────
+
+  cloudbeaver:
+    profiles: ["cloudbeaver"]
+    image: dbeaver/cloudbeaver:latest
+    container_name: gpt_cloudbeaver
+    restart: unless-stopped
+    ports:
+      - "${CLOUDBEAVER_PORT:-8978}:${CLOUDBEAVER_PORT:-8978}"
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://127.0.0.1:5140"
+        tag: "{{.Name}}"
+    environment:
+      CLOUDBEAVER_WEB_SERVER_PORT: ${CLOUDBEAVER_PORT:-8978}
+      CB_ADMIN_NAME:     ${CLOUDBEAVER_ADMIN_NAME}
+      CB_ADMIN_PASSWORD: ${CLOUDBEAVER_ADMIN_PASSWORD}
+      # OTel Java Agent — auto-instruments CloudBeaver (active when aspire + cloudbeaver profiles)
+      JAVA_TOOL_OPTIONS:            ${CLOUDBEAVER_JAVA_TOOL_OPTIONS:-}
+      OTEL_SERVICE_NAME:            CloudBeaver
+      OTEL_EXPORTER_OTLP_ENDPOINT:  ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+      OTEL_EXPORTER_OTLP_PROTOCOL:  grpc
+      OTEL_RESOURCE_ATTRIBUTES:     service.instance.id=cloudbeaver
+    volumes:
+      - cloudbeaver_workspace:/opt/cloudbeaver/workspace
+      # Pre-configured DB connections (auto-loaded by CloudBeaver on first launch)
+      - ./cloudbeaver/GlobalConfiguration/.dbeaver:/opt/cloudbeaver/workspace/GlobalConfiguration/.dbeaver
+      # OTel Java agent jar (downloaded by otel-agent-init)
+      - otel_agent_jar:/otel-agent
+      # Server config: sets rootURI=/cloudbeaver so nginx can proxy /cloudbeaver/ correctly.
+      # Without nginx profile: CloudBeaver is still reachable directly at :8978/cloudbeaver/
+      - ./cloudbeaver/cloudbeaver.conf:/opt/cloudbeaver/conf/cloudbeaver.conf
+      # - ./Configs/cloudbeaver.runtime.conf:/opt/cloudbeaver/workspace/.data/.cloudbeaver.runtime.conf
+    depends_on:
+      otel-agent-init:
+        condition: service_completed_successfully
+        required: false
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # NGINX — Reverse proxy  (optional, profile: nginx)
+  # ──────────────────────────────────────────────────────────────────────────
+  # Routes:
+  #   /              → bot (TelegramBotWebApp)
+  #   /cloudbeaver/  → CloudBeaver (served at rootURI=/cloudbeaver)
+  #
+  # Note: If cloudbeaver profile is OFF, /cloudbeaver/ returns 502 — expected.
+  # When this profile is ON, update your Cloudflare Tunnel to point to
+  # nginx (:${NGINX_PORT}) instead of the bot directly (:${BOT_PORT}).
+  # ──────────────────────────────────────────────────────────────────────────
+
+  nginx:
+    profiles: ["nginx"]
+    image: nginx:alpine
+    container_name: gpt_nginx
+    restart: unless-stopped
+    ports:
+      - "${NGINX_PORT:-80}:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://127.0.0.1:5140"
+        tag: "{{.Name}}"
+    depends_on:
+      bot:
+        condition: service_started
+      cloudbeaver:
+        condition: service_started
+        required: false
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # MCP RUNTIME — Node.js environment for MCP tools (npx)
+  # ──────────────────────────────────────────────────────────────────────────
+
+  mcp-runtime:
+    build:
+      context: .
+      dockerfile: Dockerfile.mcp
+    container_name: gpt_mcp_runtime
+    restart: unless-stopped
+    volumes:
+      - ./mcp-uploads:/app/mcp-uploads:rw
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://127.0.0.1:5140"
+        tag: "{{.Name}}"
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: gpt_bot_qdrant
+    restart: unless-stopped
+    ports:
+      - "${QDRANT_PORT:-16333}:6333"  # HTTP REST API
+      - "${QDRANT_GRPC_PORT:-16334}:6334"  # gRPC (Default port for Qdrant.Client)
+    volumes:
+      - qdrant_data:/qdrant/storage
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://127.0.0.1:5140"
+        tag: "{{.Name}}"
+
+# ──────────────────────────────────────────────────────────────────────────
+# VOLUMES
+# ──────────────────────────────────────────────────────────────────────────
+
+volumes:
+  postgres_data:
+  cloudbeaver_workspace:
+  otel_agent_jar:   # stores downloaded opentelemetry-javaagent.jar for CloudBeaver
+  qdrant_data:
+

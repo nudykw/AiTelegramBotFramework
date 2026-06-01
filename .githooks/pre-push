@@ -1,0 +1,52 @@
+#!/bin/bash
+set -e
+
+# Цвета для вывода сообщений
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+NC_RESET='\033[0m'
+
+RUN_MAIN_TESTS=false
+RUN_PROD_TESTS=false
+
+# Читаем информацию о пуше из stdin
+while read local_ref local_sha remote_ref remote_sha
+do
+    if [[ "$local_ref" =~ "refs/heads/prod" ]]; then
+        RUN_PROD_TESTS=true
+    elif [[ "$local_ref" =~ "refs/heads/main" ]]; then
+        RUN_MAIN_TESTS=true
+    fi
+done
+
+if [ "$RUN_PROD_TESTS" = true ]; then
+    echo -e "${BLUE}=== Git Pre-Push Hook: Pushing to 'prod' ===${NC_RESET}"
+    echo -e "${YELLOW}→ Running Unit and Integration Tests...${NC_RESET}"
+    
+    echo -e "${BLUE}[1/2] Running Unit Tests...${NC_RESET}"
+    if ! dotnet test tests/ServiceLayer.UnitTests/ServiceLayer.UnitTests.csproj -c Release; then
+        echo -e "${RED}✗ Unit Tests failed! Push aborted.${NC_RESET}"
+        exit 1
+    fi
+    
+    echo -e "${BLUE}[2/2] Running Integration Tests (requires running Docker)...${NC_RESET}"
+    if ! dotnet test tests/ServiceLayer.IntegrationTests/ServiceLayer.IntegrationTests.csproj -c Release; then
+        echo -e "${RED}✗ Integration Tests failed! Push aborted.${NC_RESET}"
+        exit 1
+    fi
+    
+    echo -e "${GREEN}✓ All tests (Unit & Integration) passed successfully! Push allowed.${NC_RESET}"
+
+elif [ "$RUN_MAIN_TESTS" = true ]; then
+    echo -e "${BLUE}=== Git Pre-Push Hook: Pushing to 'main' ===${NC_RESET}"
+    echo -e "${YELLOW}→ Running Unit Tests...${NC_RESET}"
+    
+    if dotnet test tests/ServiceLayer.UnitTests/ServiceLayer.UnitTests.csproj -c Release; then
+        echo -e "${GREEN}✓ Unit Tests passed successfully! Push allowed.${NC_RESET}"
+    else
+        echo -e "${RED}✗ Unit Tests failed! Push aborted.${NC_RESET}"
+        exit 1
+    fi
+fi

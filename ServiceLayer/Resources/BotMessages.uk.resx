@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SelectModel" xml:space="preserve">
+    <value>Оберіть модель для відповідей:</value>
+  </data>
+  <data name="SelectBillingDate" xml:space="preserve">
+    <value>Оберіть дату, за яку потрібно відобразити білінг:</value>
+  </data>
+  <data name="SelectProvider" xml:space="preserve">
+    <value>Оберіть провайдера ШІ:</value>
+  </data>
+  <data name="SelectProviderHelp" xml:space="preserve">
+    <value>🔄 *Автоматична ротація* — бот самостійно обирає доступний сервіс.\n🎯 *Конкретний провайдер* — бот використовуватиме лише обраний сервіс (без перемикань у разі помилок).</value>
+  </data>
+  <data name="SelectLanguage" xml:space="preserve">
+    <value>Оберіть мову / Select your language:</value>
+  </data>
+  <data name="LanguageChanged" xml:space="preserve">
+    <value>Мову змінено на {0}.</value>
+  </data>
+  <data name="ModelSelected" xml:space="preserve">
+    <value>Обрано модель: {0}</value>
+  </data>
+  <data name="ProviderSelected" xml:space="preserve">
+    <value>Встановлено провайдера: {0}</value>
+  </data>
+  <data name="ErrorOccurred" xml:space="preserve">
+    <value>Виникла помилка під час обробки запиту: {0}</value>
+  </data>
+  <data name="YouSaid" xml:space="preserve">
+    <value>Ви сказали: {0}</value>
+  </data>
+  <data name="HelpText" xml:space="preserve">
+    <value>🤖 Команди бота
+
+- /billing — Статистика використання. **(Адміни та Власник)**
+- /model — Вибір моделі ШІ для відповідей.
+- /provider — Вибір провайдера ШІ (Авторотація/OpenAI/Gemini).
+- /draw &lt;опис&gt; — Генерація зображення на основі текстового опису. Також можна просто надіслати текст з проханням щось намалювати, і зображення буде згенеровано. **&lt;Обов'язково&gt;**
+- /lang [language] — Зміна мови інтерфейсу. **[Опціонально]**
+- /help — Показати список доступних команд.
+- /restart — Перезапуск сервісу бота. **(Адміни та Власник)**</value>
+  </data>
+  <data name="AutoRotation" xml:space="preserve">
+    <value>🔄 Автоматична ротація</value>
+  </data>
+  <data name="BillingHeader" xml:space="preserve">
+    <value>📊 Звіт про використання за {0}:</value>
+  </data>
+  <data name="Billing_SelectPeriod" xml:space="preserve">
+    <value>📅 Оберіть період для перегляду статистики:</value>
+  </data>
+  <data name="Billing_NoData" xml:space="preserve">
+    <value>📭 Дані про використання відсутні.</value>
+  </data>
+  <data name="Billing_NoDataForPeriod" xml:space="preserve">
+    <value>📭 За обраний період дані відсутні.</value>
+  </data>
+  <data name="ModelSelectionError" xml:space="preserve">
+    <value>Не вдалося обрати модель {0}. {1}</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Підтвердити</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="DynamicLanguageWarning" xml:space="preserve">
+    <value>Мова '{0}' не підтримується нативно. Ми можемо використовувати ШІ для перекладу інтерфейсу на '{1}'. Це буде витрачати ваші токени для кожного повідомлення. Бажаєте продовжити?</value>
+  </data>
+  <data name="OtherLanguage" xml:space="preserve">
+    <value>Інша мова (переклад)</value>
+  </data>
+  <data name="EnterLanguagePrompt" xml:space="preserve">
+    <value>Введіть назву мови (наприклад, іспанська):</value>
+  </data>
+  <data name="HelpHeader" xml:space="preserve">
+    <value>🤖 Доступні команди бота:</value>
+  </data>
+  <data name="PermissionDenied" xml:space="preserve">
+    <value>❌ У вас немає прав для використання цієї команди.</value>
+  </data>
+  <data name="CurrentValue" xml:space="preserve">
+    <value> **Зараз: {0}**</value>
+  </data>
+  <data name="Desc_billing" xml:space="preserve">
+    <value>Статистика використання. (Тільки для адмінів та власника). Правила: Власник/виключені - безлім. Якщо InitialBalance > 0, баланс поповнюється через 24г після закінчення.</value>
+  </data>
+  <data name="Desc_model" xml:space="preserve">
+    <value>Вибрати модель ШІ для відповідей.</value>
+  </data>
+  <data name="Desc_provider" xml:space="preserve">
+    <value>Вибрати провайдера ШІ (Auto/OpenAI/Gemini).</value>
+  </data>
+  <data name="Desc_draw" xml:space="preserve">
+    <value>Згенерувати зображення за описом. Також можна просто надіслати текст з проханням щось намалювати, і зображення буде згенеровано.</value>
+  </data>
+  <data name="Desc_lang" xml:space="preserve">
+    <value>Змінити мову.</value>
+  </data>
+  <data name="Desc_help" xml:space="preserve">
+    <value>Показати список доступних команд.</value>
+  </data>
+  <data name="Desc_restart" xml:space="preserve">
+    <value>Перезавантажити бота. (Тільки для адмінів та власника)</value>
+  </data>
+  <data name="Desc_set_balance" xml:space="preserve">
+    <value>Встановити баланс користувачу за Id. Формат: /set_balance {userId} {amount}. Приклад: /set_balance 1234567 150.5 (Тільки для адмінів). Поповнення через 24г при 0.</value>
+  </data>
+  <data name="Desc_users_balance" xml:space="preserve">
+    <value>Показати баланс усіх користувачів (Тільки для адмінів)</value>
+  </data>
+  <data name="GroupContextInfo" xml:space="preserve">
+    <value>
+💡 **Групові розмови**: Щоб зберегти контекст розмови (ланцюжок) у групах, ви повинні **відповідати** (reply) на повідомлення бота. В іншому випадку бот буде сприймати кожне повідомлення як початок нової розмови.</value>
+  </data>
+  <data name="EmptyModelName" xml:space="preserve">
+    <value>Пуста назва моделі</value>
+  </data>
+  <data name="Error_Details" xml:space="preserve">
+    <value>Подробиці:</value>
+  </data>
+  <data name="Choose" xml:space="preserve">
+    <value>Виберіть</value>
+  </data>
+  <data name="RemovingKeyboard" xml:space="preserve">
+    <value>Видалення клавіатури</value>
+  </data>
+  <data name="NicePicture" xml:space="preserve">
+    <value>Гарна картинка</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Місцезнаходження</value>
+  </data>
+  <data name="Contact" xml:space="preserve">
+    <value>Контакт</value>
+  </data>
+  <data name="WhoWhereAreYou" xml:space="preserve">
+    <value>Хто ви або де ви?</value>
+  </data>
+  <data name="InlineMode" xml:space="preserve">
+    <value>Інлайн режим</value>
+  </data>
+  <data name="DonateTo" xml:space="preserve">
+    <value>Донат на:</value>
+  </data>
+  <data name="Billing" xml:space="preserve">
+    <value>Білінг: </value>
+  </data>
+  <data name="YouChoseResult" xml:space="preserve">
+    <value>Ви вибрали результат з Id: {0}</value>
+  </data>
+  <data name="TelegramApiError" xml:space="preserve">
+    <value>Помилка Telegram API:</value>
+  </data>
+  <data name="NoProvidersConfigured" xml:space="preserve">
+    <value>Чат-провайдери не налаштовані.</value>
+  </data>
+  <data name="InsufficientCredits" xml:space="preserve">
+    <value>❌ Недостатньо кредитів на вашому балансі.</value>
+  </data>
+  <data name="TryAgainLater" xml:space="preserve">
+    <value>Ви можете спробувати ще раз через 24 години, коли ваш баланс буде автоматично поповнено.</value>
+  </data>
+  <data name="UsersBalanceHeader" xml:space="preserve">
+    <value>Баланси користувачів:</value>
+  </data>
+  <data name="UsersBalanceItem" xml:space="preserve">
+    <value>{0} ({1}): {2} (зміна: {3})</value>
+  </data>
+  <data name="TimeAgo_JustNow" xml:space="preserve">
+    <value>щойно</value>
+  </data>
+  <data name="TimeAgo_Minutes" xml:space="preserve">
+    <value>{0}хв тому</value>
+  </data>
+  <data name="TimeAgo_Hours" xml:space="preserve">
+    <value>{0}год тому</value>
+  </data>
+  <data name="TimeAgo_Days" xml:space="preserve">
+    <value>{0}дн тому</value>
+  </data>
+  <data name="TimeAgo_Never" xml:space="preserve">
+    <value>ніколи</value>
+  </data>
+  <data name="SetBalance_Usage" xml:space="preserve">
+    <value>Використання: /set_balance {userId} {amount}</value>
+  </data>
+  <data name="SetBalance_Success" xml:space="preserve">
+    <value>✅ Баланс користувача {0} ({1}) встановлено на {2}</value>
+  </data>
+  <data name="SetBalance_UserNotFound" xml:space="preserve">
+    <value>❌ Користувача с ID {0} не знайдено</value>
+  </data>
+  <data name="SetBalance_InvalidFormat" xml:space="preserve">
+    <value>❌ Невірний формат. Будь ласка, вкажіть числовий ID користувача та суму.</value>
+  </data>
+  <data name="Error_ImageGenerationFailed" xml:space="preserve">
+    <value>❌ Не вдалося створити зображення. Будь ласка, спробуйте ще раз з іншим запитом або пізніше.</value>
+  </data>
+  <data name="RefreshModels_Success" xml:space="preserve">
+    <value>✅ Кеш AI-моделей успішно оновлено для всіх провайдерів.</value>
+  </data>
+  <data name="RefreshModels_Error" xml:space="preserve">
+    <value>❌ Не вдалося оновити кеш AI-моделей: {0}</value>
+  </data>
+  <data name="Desc_refresh_models" xml:space="preserve">
+    <value>Оновити кеш AI-моделей від провайдерів (тільки для адмінів).</value>
+  </data>
+  <data name="AiError_ProviderUnavailable" xml:space="preserve">
+    <value>⚠️ Провайдер '{0}' зараз недоступний. Спробуємо резервний...</value>
+  </data>
+  <data name="AiError_AllProvidersFailed" xml:space="preserve">
+    <value>⚠️ Всі AI провайдери не працюють. Спробуйте пізніше.</value>
+  </data>
+  <data name="AiError_RateLimit" xml:space="preserve">
+    <value>⚠️ Перевищено ліміт запитів. Зачекайте перед надсиланням нових повідомлень.</value>
+  </data>
+  <data name="AiError_InvalidApiKey" xml:space="preserve">
+    <value>⚠️ Невірний API ключ. Зверніться до адміністратора.</value>
+  </data>
+  <data name="AiError_ModelNotFound" xml:space="preserve">
+    <value>⚠️ Модель '{0}' не знайдено у провайдера '{1}'. Перехід до типової.</value>
+  </data>
+  <data name="AiError_Timeout" xml:space="preserve">
+    <value>⚠️ Час запиту минув. Провайдер занадто довго відповідав.</value>
+  </data>
+  <data name="AiError_ServerError" xml:space="preserve">
+    <value>⚠️ Помилка сервера {0} від провайдера '{1}'. Повторна спроба...</value>
+  </data>
+  <data name="AiError_NetworkError" xml:space="preserve">
+    <value>⚠️ Помилка мережі підключення до '{0}'. Перевірка з'єднання...</value>
+  </data>
+  <data name="AiError_ResponseParse" xml:space="preserve">
+    <value>⚠️ Не вдалося розібрати відповідь від '{0}'. Отримано невірний формат.</value>
+  </data>
+  <data name="AiError_FallbackActivated" xml:space="preserve">
+    <value>🔄 Перемкнено на резервний провайдер '{0}' через збій основного.</value>
+  </data>
+  <data name="AiError_MaxRetriesExceeded" xml:space="preserve">
+    <value>⚠️ Вичерпано максимальну кількість спроб ({0}) для '{1}'. Усі спроби не вдалися.</value>
+  </data>
+  <data name="AiError_Default" xml:space="preserve">
+    <value>⚠️ Сталася помилка при зверненні до AI провайдера.</value>
+  </data>
+  <data name="AiError_Forbidden" xml:space="preserve">
+    <value>⚠️ Доступ заборонено {0}. Ваш регіон може не підтримуватися або ключ не має доступу до моделі.</value>
+  </data>
+  <data name="AiError_BadRequest" xml:space="preserve">
+    <value>⚠️ Некоректний запит до {0}. Модель може не підтримувати цей формат або параметри.</value>
+  </data>
+  <data name="AiError_Cancelled" xml:space="preserve">
+    <value>⚠️ Запит було скасовано.</value>
+  </data>
+  <data name="Desc_tools" xml:space="preserve">
+    <value>Показати список активних MCP-інструментів, доступних для ШІ.</value>
+  </data>
+  <data name="McpTools_Header" xml:space="preserve">
+    <value>🛠️ &lt;b&gt;Активні MCP-інструменти:&lt;/b&gt;</value>
+  </data>
+  <data name="McpTools_Item" xml:space="preserve">
+    <value>• &lt;code&gt;{0}&lt;/code&gt;: {1}</value>
+  </data>
+  <data name="McpTools_Empty" xml:space="preserve">
+    <value>Активних MCP-інструментів не знайдено.</value>
+  </data>
+  <data name="SelectVoice" xml:space="preserve">
+    <value>Оберіть голос для звукових відповідей:</value>
+  </data>
+  <data name="VoiceSelected" xml:space="preserve">
+    <value>Голос '{0}' обрано!</value>
+  </data>
+  <data name="VoiceSelectedPreview" xml:space="preserve">
+    <value>Тепер я звучатиму так ({0}):</value>
+  </data>
+  <data name="VoicePreviewText" xml:space="preserve">
+    <value>Привіт! Це приклад мого нового голосу. Тобі подобається?</value>
+  </data>
+  <data name="Desc_prompt" xml:space="preserve">
+    <value>Встановити власний системний промпт/персону.</value>
+  </data>
+  <data name="Prompt_Current" xml:space="preserve">
+    <value>Ваш поточний системний промпт:
+
+&lt;pre&gt;{0}&lt;/pre&gt;</value>
+  </data>
+  <data name="Prompt_NotSet" xml:space="preserve">
+    <value>Ваш системний промпт не встановлено (використовуються налаштування за замовчуванням).</value>
+  </data>
+  <data name="Prompt_Change" xml:space="preserve">
+    <value>✏️ Змінити промпт</value>
+  </data>
+  <data name="Prompt_Reset" xml:space="preserve">
+    <value>❌ Скинути</value>
+  </data>
+  <data name="Prompt_EnterNew" xml:space="preserve">
+    <value>Дайте відповідь на це повідомлення вашим новим системним промптом. Надішліть /cancel для скасування.</value>
+  </data>
+  <data name="Prompt_Updated" xml:space="preserve">
+    <value>✅ Системний промпт успішно оновлено!</value>
+  </data>
+  <data name="Prompt_ResetSuccess" xml:space="preserve">
+    <value>✅ Системний промпт успішно скинуто до налаштувань за замовчуванням!</value>
+  </data>
+  <data name="Contact_ReceivedRAMOnly" xml:space="preserve">
+    <value>🙏 Дякую! Отримав ваші контактні дані. Ця інформація збережена тимчасово тільки в оперативній пам'яті і не буде записана до бази даних.</value>
+  </data>
+  <data name="Location_ReceivedRAMOnly" xml:space="preserve">
+    <value>🙏 Дякую! Отримав вашу геопозицію. Ця інформація збережена тимчасово тільки в оперативній пам'яті і не буде записана до бази даних.</value>
+  </data>
+  <data name="McpTools_GroupHeader" xml:space="preserve">
+    <value>📁 {0}</value>
+  </data>
+  <data name="McpTools_Group_EnabledAlert" xml:space="preserve">
+    <value>✅ Усі інструменти групи [{0}] увімкнено!</value>
+  </data>
+  <data name="McpTools_Group_DisabledAlert" xml:space="preserve">
+    <value>❌ Усі інструменти групи [{0}] вимкнено!</value>
+  </data>
+  <data name="Prompt_IsNeedDraw" xml:space="preserve">
+    <value>Чи містить ця фраза '{0}' запит щось намалювати? Відповідь: '{1}, скоріше ніж ні' або 'скоріше ні, ніж так'</value>
+  </data>
+  <data name="Prompt_IsBotMentioned" xml:space="preserve">
+    <value>Чи звернена ця фраза '{0}' до тебе? Відповідь: '{1}, скоріше ніж ні' або 'скоріше ні, ніж так'</value>
+  </data>
+  <data name="ConfirmPhrase_Yes" xml:space="preserve">
+    <value>скоріше так</value>
+  </data>
+  <data name="ThoughtsAndStatsButton" xml:space="preserve">
+    <value>🧠 Роздуми та статистика</value>
+  </data>
+  <data name="CopyDiagnosticPrompt" xml:space="preserve">
+    <value>Привіт, Antigravity! Проаналізуй цей запит до бота на прод.
+Виконай у терміналі наступну команду, щоб отримати HTML-сторінку з ходом думок та викликами MCP-инструментів:
+
+{0}
+
+Посилання на адмінку: {1}</value>
+  </data>
+  <data name="CopyForAiButtonText" xml:space="preserve">
+    <value>📋 Скопіювати для ІІ-ассистента (Antigravity)</value>
+  </data>
+  <data name="CopySuccessToastText" xml:space="preserve">
+    <value>Команду скопійовано! Відправ її Antigravity в чат.</value>
+  </data>
+</root>

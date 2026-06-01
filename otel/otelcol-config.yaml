@@ -1,0 +1,86 @@
+# =============================================================================
+# OpenTelemetry Collector — GptChatTelegramBot
+# =============================================================================
+# Collects metrics from ALL database engines and forwards to Aspire Dashboard.
+# Only the receivers for active DB profiles will successfully connect;
+# the others will log a connection error and retry — this is expected.
+# =============================================================================
+
+receivers:
+
+  # ── Syslog (Docker logs) ────────────────────────────────────────────────────
+  syslog:
+    udp:
+      listen_address: "0.0.0.0:5140"
+    protocol: rfc3164
+
+  # ── PostgreSQL ──────────────────────────────────────────────────────────────
+  postgresql:
+    endpoint: postgres:5432
+    transport: tcp
+    username: ${env:POSTGRES_USER}
+    password: ${env:POSTGRES_PASSWORD}
+    databases:
+      - ${env:POSTGRES_DB}
+    tls:
+      insecure: true
+    collection_interval: 30s
+    initial_delay: 15s
+
+  # ── MySQL ───────────────────────────────────────────────────────────────────
+  mysql:
+    endpoint: mysql:3306
+    username: ${env:MYSQL_USER}
+    password: ${env:MYSQL_PASSWORD}
+    database: ${env:MYSQL_DB}
+    collection_interval: 30s
+    initial_delay: 15s
+
+  # ── SQL Server ──────────────────────────────────────────────────────────────
+  sqlserver:
+    server: mssql
+    port: 1433
+    username: sa
+    password: ${env:MSSQL_SA_PASSWORD}
+    collection_interval: 30s
+    initial_delay: 20s
+
+exporters:
+
+  # ── Aspire Dashboard (OTLP/gRPC) ────────────────────────────────────────────
+  otlp/aspire:
+    endpoint: aspire-dashboard:18889
+    tls:
+      insecure: true
+
+  # ── Debug (optional — enable to see what's being collected) ─────────────────
+  # debug:
+  #   verbosity: detailed
+
+processors:
+
+  # Tag all collector-scraped metrics with a meaningful service name
+  resource/service_name:
+    attributes:
+      - key: service.name
+        value: "Databases"
+        action: upsert
+
+  # Tag all syslog container logs with a service name
+  resource/logs:
+    attributes:
+      - key: service.name
+        value: "DockerContainers"
+        action: upsert
+
+service:
+  pipelines:
+    metrics/databases:
+      receivers: [postgresql, mysql, sqlserver]
+      processors: [resource/service_name]
+      exporters: [otlp/aspire]
+
+    logs/containers:
+      receivers: [syslog]
+      processors: [resource/logs]
+      exporters: [otlp/aspire]

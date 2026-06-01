@@ -1,0 +1,24 @@
+# Tasks for License Compliance & Russian Language Purge
+
+- `[x]` Task 1: Clean and translate documentation files (Markdown)
+  - `[x]` Translate `.agent/workflows/mcp_gateway.md` to English
+  - `[x]` Translate `.agent/workflows/prod_mcp_gateway.md` to English
+  - `[x]` Translate `.agent/workflows/project_memory.md` to English
+  - `[x]` Fix Ukrainian remnants in English `docs/api_reference.md`
+  - `[x]` Fix Cyrillic word in `docs/codegraph_setup.en.md`
+- `[x]` Task 2: Purge Russian from source code comments & XML docs
+  - `[x]` Translate comments in `IStaticStringEnum.cs` & `StaticStringEnumBase.cs`
+  - `[x]` Translate comments in `ISemanticMemoryService.cs`
+  - `[x]` Translate comments in `UpdateHandler.cs` & `MessageProcessor.cs`
+- `[x]` Task 3: Purge Russian from User Interface (C# and Resources)
+  - `[x]` Remove `"ru"` switches and hardcoded Russian messages in `UpdateHandler.cs`
+  - `[x]` Remove `"ru"` cases in `MessageProcessor.cs`
+  - `[x]` Translate Russian labels in `DashboardEndpoints.cs` to English
+  - `[x]` Translate Russian labels in `McpEndpoints.cs` to English
+  - `[x]` Remove Russian value from `BotMessages.resx`
+- `[x]` Task 4: Fix unit and integration tests
+  - `[x]` Refactor test expectations in `LocalizationCompletenessTests.cs`
+  - `[x]` Refactor test cases in `MessageProcessorTests.cs` and `BotReceivesMessageTests.cs`
+- `[x]` Task 5: Compilation and verification
+  - `[x]` Ensure project compiles with 0 errors
+  - `[x]` Ensure all 195 integration & unit tests pass successfully

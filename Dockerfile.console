@@ -1,0 +1,42 @@
+# ── Build stage ──────────────────────────────────────────────────────────────
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
+WORKDIR /src
+
+# Copy solution and project files first (layer cache for NuGet restore)
+COPY GPTChatTelegramBot.sln .
+COPY TelegramBotApp/TelegramBotApp.csproj         TelegramBotApp/
+COPY ServiceLayer/ServiceLayer.csproj             ServiceLayer/
+COPY DataBaseLayer/DataBaseLayer.csproj           DataBaseLayer/
+
+
+# Copy remaining source code
+COPY TelegramBotApp/   TelegramBotApp/
+COPY ServiceLayer/     ServiceLayer/
+COPY DataBaseLayer/    DataBaseLayer/
+COPY Configs/          Configs/
+
+# Self-contained + trimmed publication → no .NET runtime needed in final image
+RUN dotnet publish TelegramBotApp/TelegramBotApp.csproj \
+    -c Release \
+    -r linux-musl-x64 \
+    --self-contained true \
+    -p:PublishTrimmed=true \
+    -p:PublishSingleFile=true \
+    -o /app/publish
+
+# ── Runtime stage ─────────────────────────────────────────────────────────────
+# runtime-deps:alpine contains only the native libs required by a self-contained .NET app
+FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-alpine AS runtime
+WORKDIR /app
+
+# Non-root user for security
+RUN apk add --no-cache docker-cli && \
+    addgroup -S appgroup && adduser -S appuser -G appgroup
+
+COPY --from=build --chown=appuser:appgroup /app/publish/TelegramBotApp .
+# Include Configs so the console app can find appsettings.console.json
+COPY --from=build --chown=appuser:appgroup /src/Configs ./Configs
+
+USER appuser
+
+ENTRYPOINT ["./TelegramBotApp"]

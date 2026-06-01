@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "codegraph": {
+      "command": "node",
+      "args": [
+        "./.agent/mcp-gateway.js"
+      ]
+    },
+    "prod-telemetry": {
+      "command": "node",
+      "args": [
+        "./.agent/prod-mcp-gateway.js"
+      ]
+    },
+    "project-memory": {
+      "command": "node",
+      "args": [
+        "./.agent/project-memory-mcp.js"
+      ]
+    }
+  }
+}

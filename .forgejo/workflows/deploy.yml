@@ -1,0 +1,299 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    # All secrets are exposed as plain env vars so the shell script can
+    # reference them safely via $VAR without ${{ }} substitution issues
+    # caused by special characters in secret values.
+    env:
+      DEPLOY_KEY:                 ${{ secrets.DEPLOY_KEY }}
+      DEPLOY_HOST:                ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_USER:                ${{ secrets.DEPLOY_USER }}
+      BOT_PORT:                   ${{ secrets.BOT_PORT }}
+      TELEGRAM_BOT_TOKEN:         ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_OWNER_ID:          ${{ secrets.TELEGRAM_OWNER_ID }}
+      TELEGRAM_BASE_API_URL:      ${{ secrets.TELEGRAM_BASE_API_URL }}
+      POSTGRES_DB:                ${{ secrets.POSTGRES_DB }}
+      POSTGRES_USER:              ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD:          ${{ secrets.POSTGRES_PASSWORD }}
+      OPENAI_API_KEY:             ${{ secrets.OPENAI_API_KEY }}
+      GEMINI_API_KEY:             ${{ secrets.GEMINI_API_KEY }}
+      GROK_API_KEY:               ${{ secrets.GROK_API_KEY }}
+      DEEPSEEK_API_KEY:           ${{ secrets.DEEPSEEK_API_KEY }}
+      CLOUDBEAVER_PORT:           ${{ secrets.CLOUDBEAVER_PORT }}
+      CLOUDBEAVER_ADMIN_NAME:     ${{ secrets.CLOUDBEAVER_ADMIN_NAME }}
+      CLOUDBEAVER_ADMIN_PASSWORD: ${{ secrets.CLOUDBEAVER_ADMIN_PASSWORD }}
+      CLOUDBEAVER_PUBLIC_URL:     ${{ secrets.CLOUDBEAVER_PUBLIC_URL }}
+      ASPIRE_PORT:                ${{ secrets.ASPIRE_PORT }}
+      ASPIRE_PUBLIC_URL:          ${{ secrets.ASPIRE_PUBLIC_URL }}
+      # Empty = CloudBeaver starts without OTel Java agent (safe default).
+      # Set to "-javaagent:/otel-agent/opentelemetry-javaagent.jar" only after
+      # confirming otel-agent-init downloaded the jar successfully.
+      CLOUDBEAVER_JAVA_TOOL_OPTIONS: ""
+
+    steps:
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Upload .env to server
+        run: |
+          {
+            printf 'COMPOSE_PROFILES=postgres,cloudbeaver,aspire\n'
+            printf 'BOT_PORT=%s\n'                      "${BOT_PORT:-8080}"
+            printf 'ASPNETCORE_ENVIRONMENT=Production\n'
+            printf 'SWAGGER_ENABLED=false\n'
+            printf 'TELEGRAM_BOT_TOKEN=%s\n'            "$TELEGRAM_BOT_TOKEN"
+            printf 'TELEGRAM_OWNER_ID=%s\n'             "$TELEGRAM_OWNER_ID"
+            printf 'TELEGRAM_BASE_API_URL=%s\n'         "$TELEGRAM_BASE_API_URL"
+            printf 'DB_PROVIDER=PostgreSQL\n'
+            printf 'DB_CONNECTION_STRING=Host=postgres;Port=5432;Database=%s;Username=%s;Password=%s\n' \
+                   "$POSTGRES_DB" "$POSTGRES_USER" "$POSTGRES_PASSWORD"
+            printf 'POSTGRES_DB=%s\n'                   "$POSTGRES_DB"
+            printf 'POSTGRES_USER=%s\n'                 "$POSTGRES_USER"
+            printf 'POSTGRES_PASSWORD=%s\n'             "$POSTGRES_PASSWORD"
+            printf 'POSTGRES_PORT=5432\n'
+            printf 'OPENAI_API_KEY=%s\n'                "$OPENAI_API_KEY"
+            printf 'GEMINI_API_KEY=%s\n'                "$GEMINI_API_KEY"
+            printf 'GROK_API_KEY=%s\n'                  "$GROK_API_KEY"
+            printf 'DEEPSEEK_API_KEY=%s\n'              "$DEEPSEEK_API_KEY"
+            printf 'CLOUDBEAVER_PORT=%s\n'              "${CLOUDBEAVER_PORT:-8978}"
+            printf 'CLOUDBEAVER_ADMIN_NAME=%s\n'        "$CLOUDBEAVER_ADMIN_NAME"
+            printf 'CLOUDBEAVER_ADMIN_PASSWORD=%s\n'    "$CLOUDBEAVER_ADMIN_PASSWORD"
+            printf 'CLOUDBEAVER_PUBLIC_URL=%s\n'        "$CLOUDBEAVER_PUBLIC_URL"
+            printf 'CLOUDBEAVER_JAVA_TOOL_OPTIONS=%s\n' "$CLOUDBEAVER_JAVA_TOOL_OPTIONS"
+            printf 'ASPIRE_PORT=%s\n'                   "${ASPIRE_PORT:-18888}"
+            printf 'ASPIRE_PUBLIC_URL=%s\n'             "$ASPIRE_PUBLIC_URL"
+            printf 'OTEL_EXPORTER_OTLP_ENDPOINT=http://aspire-dashboard:18889\n'
+          } | ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=accept-new \
+                "$DEPLOY_USER@$DEPLOY_HOST" \
+                'cat > /home/nudyk/Sites/GptChatTelegramBot/.env.secrets'
+
+      - name: Test and Deploy
+        run: |
+          cat > /tmp/deploy.sh << 'SCRIPT'
+          set -e
+          cd /home/nudyk/Sites/GptChatTelegramBot
+
+          PREVIOUS_COMMIT=$(git rev-parse HEAD 2>/dev/null || echo "")
+          BACKUP_DIR="/home/nudyk/deploy_backups/backup_$(date +%Y%m%d_%H%M%S)"
+
+          trigger_rollback() {
+            echo "⚠️ [ROLLBACK] Deployment failed! Triggering rollback..."
+
+            # Stop any newly started containers
+            docker compose --profile postgres --profile cloudbeaver --profile aspire down || true
+
+            # Restore files from backup
+            if [ -d "$BACKUP_DIR" ]; then
+              if [ -f "$BACKUP_DIR/.env.bak" ]; then
+                echo "=== Restoring .env ==="
+                cp "$BACKUP_DIR/.env.bak" .env
+              fi
+              if [ -f "$BACKUP_DIR/appsettings.json.bak" ]; then
+                echo "=== Restoring Configs/appsettings.json ==="
+                cp "$BACKUP_DIR/appsettings.json.bak" Configs/appsettings.json
+              fi
+              if [ -f "$BACKUP_DIR/volumes.tar.gz" ]; then
+                echo "=== Restoring Docker Volumes ==="
+                docker run --rm \
+                  -v postgres_data:/volumes/postgres_data \
+                  -v sqlite_data:/volumes/sqlite_data \
+                  -v qdrant_data:/volumes/qdrant_data \
+                  -v cloudbeaver_workspace:/volumes/cloudbeaver_workspace \
+                  -v "$BACKUP_DIR:/backup" \
+                  alpine sh -c "rm -rf /volumes/* && tar -xzf /backup/volumes.tar.gz -C /volumes"
+              fi
+            fi
+
+            # Reset code repository if we have a previous commit recorded
+            if [ -n "$PREVIOUS_COMMIT" ]; then
+              echo "=== Resetting Git back to $PREVIOUS_COMMIT ==="
+              git checkout "$PREVIOUS_COMMIT"
+              git reset --hard "$PREVIOUS_COMMIT"
+            fi
+
+            # Rebuild and start the old version
+            echo "=== Starting original containers ==="
+            docker compose --profile postgres --profile cloudbeaver --profile aspire up -d --build
+            echo "✅ [ROLLBACK] Original environment successfully restored!"
+          }
+
+          # Check available space before starting (Pre-flight Disk Check)
+          # Require at least 2,000,000 KB (~2 GB) of free space on /home/nudyk
+          echo "=== Running Pre-flight Disk Check ==="
+          FREE_SPACE_KB=$(df -k /home/nudyk | tail -1 | awk '{print $4}')
+          if [ "$FREE_SPACE_KB" -lt 2000000 ]; then
+            echo "❌ [ERROR] Pre-flight Disk Check failed: Less than 2GB of free space available on /home/nudyk."
+            echo "Available space: $((FREE_SPACE_KB / 1024)) MB. Aborting deployment."
+            exit 1
+          fi
+
+          echo "=== Cleaning up old backups (keeping last 3) ==="
+          mkdir -p /home/nudyk/deploy_backups
+          ls -dt /home/nudyk/deploy_backups/backup_* 2>/dev/null | tail -n +4 | xargs rm -rf || true
+
+          echo "=== Fixing CloudBeaver permissions ==="
+          if [ -d cloudbeaver/GlobalConfiguration/.dbeaver ]; then
+            sudo chown -R $(id -u):$(id -g) cloudbeaver/GlobalConfiguration/.dbeaver || true
+          fi
+
+          echo "=== Creating Backup (Cold Backup) ==="
+          # Stop containers cleanly to ensure database consistency
+          docker compose --profile postgres --profile cloudbeaver --profile aspire down
+
+          # Create backup folder
+          mkdir -p "$BACKUP_DIR"
+
+          # Backup config files
+          [ -f .env ] && cp .env "$BACKUP_DIR/.env.bak" || true
+          [ -f Configs/appsettings.json ] && cp Configs/appsettings.json "$BACKUP_DIR/appsettings.json.bak" || true
+
+          # Backup volumes into tarball
+          docker run --rm \
+            -v postgres_data:/volumes/postgres_data:ro \
+            -v sqlite_data:/volumes/sqlite_data:ro \
+            -v qdrant_data:/volumes/qdrant_data:ro \
+            -v cloudbeaver_workspace:/volumes/cloudbeaver_workspace:ro \
+            -v "$BACKUP_DIR:/backup" \
+            alpine tar -czf /backup/volumes.tar.gz -C /volumes .
+
+          # Verify backup tarball was created successfully
+          if [ ! -s "$BACKUP_DIR/volumes.tar.gz" ]; then
+            echo "❌ [ERROR] Volume backup archive is empty or failed to create."
+            # Start containers back up and abort
+            docker compose --profile postgres --profile cloudbeaver --profile aspire up -d
+            exit 1
+          fi
+
+          # Set up error trap for rollback
+          trap 'trigger_rollback' ERR
+
+          echo "=== Updating codebase ==="
+          git fetch origin
+          git checkout prod
+          git reset --hard origin/prod
+
+          echo "=== Merging secrets into .env ==="
+          python3 -c "
+          import os, sys
+
+          env_path = '.env'
+          secrets_path = '.env.secrets'
+          example_path = '.env.example'
+
+          secrets = {}
+          if os.path.exists(secrets_path):
+              with open(secrets_path, 'r', encoding='utf-8') as f:
+                  for line in f:
+                      line = line.strip()
+                      if not line or line.startswith('#'):
+                          continue
+                      if '=' in line:
+                          k, v = line.split('=', 1)
+                          secrets[k.strip()] = v.strip()
+
+          lines = []
+          seen_keys = set()
+          base_path = env_path if os.path.exists(env_path) else example_path
+
+          if os.path.exists(base_path):
+              with open(base_path, 'r', encoding='utf-8') as f:
+                  for line in f:
+                      stripped = line.strip()
+                      if stripped and not stripped.startswith('#') and '=' in stripped:
+                          k, v = stripped.split('=', 1)
+                          k = k.strip()
+                          if k in secrets:
+                              lines.append(f'{k}={secrets[k]}\n')
+                              seen_keys.add(k)
+                              continue
+                          else:
+                              seen_keys.add(k)
+                      lines.append(line)
+
+          for k, v in secrets.items():
+              if k not in seen_keys:
+                  lines.append(f'\n{k}={v}\n')
+
+          with open(env_path, 'w', encoding='utf-8') as f:
+              f.writelines(lines)
+          "
+          rm -f .env.secrets
+
+          echo "=== Generating git_info.json ==="
+          python3 -c "
+          import json, subprocess
+          try:
+              commit_hash = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('utf-8').strip()
+              commit_date = subprocess.check_output(['git', 'log', '-1', '--format=%cI']).decode('utf-8').strip()
+              commit_msg = subprocess.check_output(['git', 'log', '-1', '--format=%B']).decode('utf-8').strip()
+
+              git_info = {
+                  'CommitHash': commit_hash,
+                  'CommitMessage': commit_msg,
+                  'CommitDate': commit_date
+              }
+              with open('Configs/git_info.json', 'w', encoding='utf-8') as f:
+                  json.dump(git_info, f, indent=2, ensure_ascii=False)
+              print('Successfully generated Configs/git_info.json')
+          except Exception as e:
+              print(f'Error generating git_info.json: {e}')
+          "
+
+          echo "=== Running unit tests ==="
+          docker run --rm \
+            -v "$(pwd):/src" \
+            -w /src \
+            mcr.microsoft.com/dotnet/sdk:10.0-alpine \
+            dotnet test tests/ServiceLayer.UnitTests/ServiceLayer.UnitTests.csproj \
+              -c Release --logger "console;verbosity=normal"
+
+          echo "=== Deploying ==="
+          cp Configs/appsettings.sample.json Configs/appsettings.json
+
+          # Configs/cloudbeaver.runtime.conf is gitignored.
+          # If it doesn't exist Docker creates a DIRECTORY at the mount point, crashing CloudBeaver.
+          [ -d Configs/cloudbeaver.runtime.conf ] && rm -rf Configs/cloudbeaver.runtime.conf
+          [ ! -f Configs/cloudbeaver.runtime.conf ] && echo '{}' > Configs/cloudbeaver.runtime.conf
+
+          docker compose --profile postgres --profile cloudbeaver --profile aspire up -d --build
+
+          echo "=== Running health check on bot container ==="
+          # Wait up to 180 seconds (36 * 5s) — MCP servers need time to initialize
+          HEALTHY=false
+          for i in {1..36}; do
+            STATUS=$(docker inspect --format='{{.State.Health.Status}}' gpt_telegram_bot 2>/dev/null || echo "unhealthy")
+            if [ "$STATUS" = "healthy" ]; then
+              echo "✅ Bot container is healthy!"
+              HEALTHY=true
+              break
+            fi
+            echo "Waiting for bot to be healthy... (status: $STATUS)"
+            sleep 5
+          done
+
+          if [ "$HEALTHY" = "false" ]; then
+            echo "❌ Bot container failed healthcheck."
+            exit 1
+          fi
+
+          # Disable error trap on success
+          trap - ERR
+
+          echo "=== Running containers ==="
+          docker compose --profile postgres --profile cloudbeaver --profile aspire ps
+          SCRIPT
+
+          ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=accept-new \
+              "$DEPLOY_USER@$DEPLOY_HOST" 'bash -s' < /tmp/deploy.sh

@@ -1,0 +1,47 @@
+# ── Build stage ──────────────────────────────────────────────────────────────
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
+WORKDIR /src
+
+# Copy project files first for NuGet restore layer caching
+COPY TelegramBotWebApp/TelegramBotWebApp.csproj   TelegramBotWebApp/
+COPY ServiceLayer/ServiceLayer.csproj             ServiceLayer/
+COPY DataBaseLayer/DataBaseLayer.csproj           DataBaseLayer/
+
+
+# Copy remaining source code
+COPY TelegramBotWebApp/ TelegramBotWebApp/
+COPY ServiceLayer/      ServiceLayer/
+COPY DataBaseLayer/     DataBaseLayer/
+COPY Configs/           Configs/
+
+# Self-contained publication → no .NET runtime needed in final image
+# NOTE: PublishTrimmed is intentionally disabled — EFCore and OpenTelemetry
+#       use reflection extensively and are not trim-safe.
+RUN dotnet publish TelegramBotWebApp/TelegramBotWebApp.csproj \
+    -c Release \
+    -r linux-musl-x64 \
+    --self-contained true \
+    -o /app/publish/TelegramBotWebApp
+
+
+# ── Runtime stage ─────────────────────────────────────────────────────────────
+# runtime-deps:alpine contains only the native libs required by a self-contained .NET app
+FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-alpine AS runtime
+WORKDIR /app
+
+# Non-root user for security
+RUN apk add --no-cache icu-libs docker-cli && \
+    addgroup -S appgroup && adduser -S appuser -G appgroup
+
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+
+COPY --from=build --chown=appuser:appgroup /app/publish/TelegramBotWebApp .
+# Include Configs so the web app can locate appsettings.web.json at runtime
+COPY --from=build --chown=appuser:appgroup /src/Configs ./Configs
+
+USER appuser
+
+EXPOSE 8080
+ENV ASPNETCORE_URLS=http://+:8080
+
+ENTRYPOINT ["./TelegramBotWebApp"]

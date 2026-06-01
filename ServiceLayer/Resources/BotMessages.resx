@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SelectModel" xml:space="preserve">
+    <value>Choose a model for responses:</value>
+  </data>
+  <data name="SelectBillingDate" xml:space="preserve">
+    <value>Select a date to display billing info:</value>
+  </data>
+  <data name="SelectProvider" xml:space="preserve">
+    <value>Select provider strategy:</value>
+  </data>
+  <data name="SelectProviderHelp" xml:space="preserve">
+    <value>🔄 *Auto Rotation* — bot automatically selects an available service.\n🎯 *Specific Provider* — bot will only use the selected service (no failover).</value>
+  </data>
+  <data name="SelectLanguage" xml:space="preserve">
+    <value>Select your language / Виберіть свою мову:</value>
+  </data>
+  <data name="LanguageChanged" xml:space="preserve">
+    <value>Language changed to {0}.</value>
+  </data>
+  <data name="ModelSelected" xml:space="preserve">
+    <value>Model selected: {0}</value>
+  </data>
+  <data name="ProviderSelected" xml:space="preserve">
+    <value>Provider strategy set to: {0}</value>
+  </data>
+  <data name="ErrorOccurred" xml:space="preserve">
+    <value>An error occurred while processing the request: {0}</value>
+  </data>
+  <data name="YouSaid" xml:space="preserve">
+    <value>You said: {0}</value>
+  </data>
+  <data name="HelpText" xml:space="preserve">
+    <value>🤖 Bot Commands
+
+- /billing — Show usage statistics. **(Admins &amp; Owner only)**
+- /model — Select AI model for responses.
+- /provider — Select AI provider strategy (Auto/OpenAI/Gemini).
+- /draw &lt;prompt&gt; — Generate image by description. You can also just send a text prompt asking to draw something, and the image will be generated. **&lt;Required&gt;**
+- /lang [language] — Change language. **[Optional]**
+- /help — Show the list of available commands.
+- /restart — Restart bot. **(Admins &amp; Owner only)**</value>
+  </data>
+  <data name="AutoRotation" xml:space="preserve">
+    <value>🔄 Auto Rotation</value>
+  </data>
+  <data name="BillingHeader" xml:space="preserve">
+    <value>📊 Billing report for {0}:</value>
+  </data>
+  <data name="Billing_SelectPeriod" xml:space="preserve">
+    <value>📅 Select a period to view usage statistics:</value>
+  </data>
+  <data name="Billing_NoData" xml:space="preserve">
+    <value>📭 No billing data found.</value>
+  </data>
+  <data name="Billing_NoDataForPeriod" xml:space="preserve">
+    <value>📭 No usage found for the selected period.</value>
+  </data>
+  <data name="ModelSelectionError" xml:space="preserve">
+    <value>Failed to select model {0}. {1}</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="DynamicLanguageWarning" xml:space="preserve">
+    <value>Language '{0}' is not natively supported. We can use AI to translate the interface to '{1}' for you. This will consume your tokens for each message. Do you want to proceed?</value>
+  </data>
+  <data name="OtherLanguage" xml:space="preserve">
+    <value>Other Language (translation)</value>
+  </data>
+  <data name="EnterLanguagePrompt" xml:space="preserve">
+    <value>Please enter the language name (e.g., Spanish):</value>
+  </data>
+  <data name="HelpHeader" xml:space="preserve">
+    <value>🤖 Available Bot Commands:</value>
+  </data>
+  <data name="PermissionDenied" xml:space="preserve">
+    <value>❌ You do not have permission to use this command.</value>
+  </data>
+  <data name="CurrentValue" xml:space="preserve">
+    <value> **Now: {0}**</value>
+  </data>
+  <data name="Desc_billing" xml:space="preserve">
+    <value>Show usage statistics. (Admins &amp; Owner only). Billing Rules: Owner/Ignored are exempt. If InitialBalance > 0, balance refills 24h after last activity if at 0.</value>
+  </data>
+  <data name="Desc_model" xml:space="preserve">
+    <value>Select AI model for responses.</value>
+  </data>
+  <data name="Desc_provider" xml:space="preserve">
+    <value>Select AI provider strategy (Auto/OpenAI/Gemini).</value>
+  </data>
+  <data name="Desc_draw" xml:space="preserve">
+    <value>Generate image by description. You can also just send a text prompt asking to draw something, and the image will be generated.</value>
+  </data>
+  <data name="Desc_lang" xml:space="preserve">
+    <value>Change language.</value>
+  </data>
+  <data name="Desc_help" xml:space="preserve">
+    <value>Show the list of available commands.</value>
+  </data>
+  <data name="Desc_restart" xml:space="preserve">
+    <value>Restart bot. (Admins &amp; Owner only)</value>
+  </data>
+  <data name="Desc_set_balance" xml:space="preserve">
+    <value>Set user balance by Id. Format: /set_balance {userId} {amount}. Example: /set_balance 1234567 150.5 (Admins only). Billing: Refills 24h after 0 reach.</value>
+  </data>
+  <data name="Desc_users_balance" xml:space="preserve">
+    <value>Show all users' balances (Admins only)</value>
+  </data>
+  <data name="GroupContextInfo" xml:space="preserve">
+    <value>
+💡 **Group Conversations**: To maintain the conversation context (thread) in groups, you must **reply** to the bot's messages. Otherwise, the bot will treat each message as the start of a new conversation.</value>
+  </data>
+  <data name="EmptyModelName" xml:space="preserve">
+    <value>Empty model name</value>
+  </data>
+  <data name="Error_Details" xml:space="preserve">
+    <value>Details:</value>
+  </data>
+  <data name="Choose" xml:space="preserve">
+    <value>Choose</value>
+  </data>
+  <data name="RemovingKeyboard" xml:space="preserve">
+    <value>Removing keyboard</value>
+  </data>
+  <data name="NicePicture" xml:space="preserve">
+    <value>Nice Picture</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="Contact" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="WhoWhereAreYou" xml:space="preserve">
+    <value>Who or Where are you?</value>
+  </data>
+  <data name="InlineMode" xml:space="preserve">
+    <value>Inline Mode</value>
+  </data>
+  <data name="DonateTo" xml:space="preserve">
+    <value>Donate to:</value>
+  </data>
+  <data name="Billing" xml:space="preserve">
+    <value>Billing: </value>
+  </data>
+  <data name="YouChoseResult" xml:space="preserve">
+    <value>You chose result with Id: {0}</value>
+  </data>
+  <data name="TelegramApiError" xml:space="preserve">
+    <value>Telegram API Error:</value>
+  </data>
+  <data name="NoProvidersConfigured" xml:space="preserve">
+    <value>No chat providers configured.</value>
+  </data>
+  <data name="Prompt_IsNeedDraw" xml:space="preserve">
+    <value>Does this phrase '{0}' contain a request to draw something? Answer: '{1}, rather than no' or 'rather no, than yes'</value>
+  </data>
+  <data name="Prompt_IsBotMentioned" xml:space="preserve">
+    <value>Is this phrase '{0}' addressed to you? Answer: '{1}, rather than no' or 'rather no, than yes'</value>
+  </data>
+  <data name="ConfirmPhrase_Yes" xml:space="preserve">
+    <value>rather yes</value>
+  </data>
+  <data name="InsufficientCredits" xml:space="preserve">
+    <value>❌ Insufficient credits on your balance.</value>
+  </data>
+  <data name="TryAgainLater" xml:space="preserve">
+    <value>You can try again in 24 hours when your balance is automatically replenished.</value>
+  </data>
+  <data name="UsersBalanceHeader" xml:space="preserve">
+    <value>Users' Balances:</value>
+  </data>
+  <data name="UsersBalanceItem" xml:space="preserve">
+    <value>{0} ({1}): {2} (last changed: {3})</value>
+  </data>
+  <data name="TimeAgo_JustNow" xml:space="preserve">
+    <value>just now</value>
+  </data>
+  <data name="TimeAgo_Minutes" xml:space="preserve">
+    <value>{0}m ago</value>
+  </data>
+  <data name="TimeAgo_Hours" xml:space="preserve">
+    <value>{0}h ago</value>
+  </data>
+  <data name="TimeAgo_Days" xml:space="preserve">
+    <value>{0}d ago</value>
+  </data>
+  <data name="TimeAgo_Never" xml:space="preserve">
+    <value>never</value>
+  </data>
+  <data name="SetBalance_Usage" xml:space="preserve">
+    <value>Usage: /set_balance {userId} {amount}</value>
+  </data>
+  <data name="SetBalance_Success" xml:space="preserve">
+    <value>✅ Balance for user {0} ({1}) set to {2}</value>
+  </data>
+  <data name="SetBalance_UserNotFound" xml:space="preserve">
+    <value>❌ User with ID {0} not found</value>
+  </data>
+  <data name="SetBalance_InvalidFormat" xml:space="preserve">
+    <value>❌ Invalid format. Please provide numeric User ID and Amount.</value>
+  </data>
+  <data name="Error_ImageGenerationFailed" xml:space="preserve">
+    <value>❌ Image generation failed. Please try again with a different prompt or later.</value>
+  </data>
+  <data name="RefreshModels_Success" xml:space="preserve">
+    <value>✅ AI models cache has been successfully refreshed for all providers.</value>
+  </data>
+  <data name="RefreshModels_Error" xml:space="preserve">
+    <value>❌ Failed to refresh AI models cache: {0}</value>
+  </data>
+  <data name="Desc_refresh_models" xml:space="preserve">
+    <value>Refresh AI models cache from providers (Admins only).</value>
+  </data>
+  <data name="AiError_ProviderUnavailable" xml:space="preserve">
+    <value>⚠️ {0} provider is currently unavailable. Trying fallback...</value>
+  </data>
+  <data name="AiError_AllProvidersFailed" xml:space="preserve">
+    <value>⚠️ All AI providers failed. Please try again later.</value>
+  </data>
+  <data name="AiError_RateLimit" xml:space="preserve">
+    <value>⚠️ Rate limit exceeded. Please wait before sending new messages.</value>
+  </data>
+  <data name="AiError_InvalidApiKey" xml:space="preserve">
+    <value>⚠️ Invalid API key configured. Please contact administrator.</value>
+  </data>
+  <data name="AiError_ModelNotFound" xml:space="preserve">
+    <value>⚠️ Model '{0}' not found in provider '{1}'. Falling back to default.</value>
+  </data>
+  <data name="AiError_Timeout" xml:space="preserve">
+    <value>⚠️ Request timed out. Provider took too long to respond.</value>
+  </data>
+  <data name="AiError_ServerError" xml:space="preserve">
+    <value>⚠️ Server error {0} from provider '{1}'. Retrying...</value>
+  </data>
+  <data name="AiError_NetworkError" xml:space="preserve">
+    <value>⚠️ Network error while connecting to '{0}'. Checking connection...</value>
+  </data>
+  <data name="AiError_ResponseParse" xml:space="preserve">
+    <value>⚠️ Failed to parse response from '{0}'. Invalid format received.</value>
+  </data>
+  <data name="AiError_FallbackActivated" xml:space="preserve">
+    <value>🔄 Switched to fallback provider '{0}' due to primary provider failure.</value>
+  </data>
+  <data name="AiError_MaxRetriesExceeded" xml:space="preserve">
+    <value>⚠️ Maximum retries ({0}) exceeded for '{1}'. All attempts failed.</value>
+  </data>
+  <data name="AiError_Default" xml:space="preserve">
+    <value>⚠️ An error occurred while contacting the AI provider.</value>
+  </data>
+  <data name="AiError_Forbidden" xml:space="preserve">
+    <value>⚠️ Access forbidden by {0}. Your region may not be supported or the key lacks model access.</value>
+  </data>
+  <data name="AiError_BadRequest" xml:space="preserve">
+    <value>⚠️ Invalid request to {0}. The model may not support this format or parameters.</value>
+  </data>
+  <data name="AiError_Cancelled" xml:space="preserve">
+    <value>⚠️ Request was cancelled.</value>
+  </data>
+  <data name="Desc_tools" xml:space="preserve">
+    <value>Show the list of active MCP tools available for AI.</value>
+  </data>
+  <data name="McpTools_Header" xml:space="preserve">
+    <value>🛠️ &lt;b&gt;Active MCP Tools:&lt;/b&gt;</value>
+  </data>
+  <data name="McpTools_Item" xml:space="preserve">
+    <value>• &lt;code&gt;{0}&lt;/code&gt;: {1}</value>
+  </data>
+  <data name="McpTools_Empty" xml:space="preserve">
+    <value>No active MCP tools found.</value>
+  </data>
+  <data name="SelectVoice" xml:space="preserve">
+    <value>Select a voice for audio responses:</value>
+  </data>
+  <data name="VoiceSelected" xml:space="preserve">
+    <value>Voice '{0}' selected!</value>
+  </data>
+  <data name="VoiceSelectedPreview" xml:space="preserve">
+    <value>Now I will sound like this ({0}):</value>
+  </data>
+  <data name="VoicePreviewText" xml:space="preserve">
+    <value>Hello! This is a preview of my new voice. Do you like it?</value>
+  </data>
+  <data name="Desc_prompt" xml:space="preserve">
+    <value>Set a custom system prompt/persona.</value>
+  </data>
+  <data name="Prompt_Current" xml:space="preserve">
+    <value>Your current custom system prompt is:
+
+&lt;pre&gt;{0}&lt;/pre&gt;</value>
+  </data>
+  <data name="Prompt_NotSet" xml:space="preserve">
+    <value>Your custom system prompt is not set (using default settings).</value>
+  </data>
+  <data name="Prompt_Change" xml:space="preserve">
+    <value>✏️ Change prompt</value>
+  </data>
+  <data name="Prompt_Reset" xml:space="preserve">
+    <value>❌ Reset to default</value>
+  </data>
+  <data name="Prompt_EnterNew" xml:space="preserve">
+    <value>Reply to this message with your new system prompt. Send /cancel to cancel.</value>
+  </data>
+  <data name="Prompt_Updated" xml:space="preserve">
+    <value>✅ System prompt successfully updated!</value>
+  </data>
+  <data name="Prompt_ResetSuccess" xml:space="preserve">
+    <value>✅ System prompt successfully reset to default!</value>
+  </data>
+  <data name="Contact_ReceivedRAMOnly" xml:space="preserve">
+    <value>🙏 Thank you! Received your contact info. This information is stored temporarily in memory only and will not be saved to the database.</value>
+  </data>
+  <data name="Location_ReceivedRAMOnly" xml:space="preserve">
+    <value>🙏 Thank you! Received your location. This information is stored temporarily in memory only and will not be saved to the database.</value>
+  </data>
+  <data name="McpTools_GroupHeader" xml:space="preserve">
+    <value>📁 {0}</value>
+  </data>
+  <data name="McpTools_Group_EnabledAlert" xml:space="preserve">
+    <value>✅ All tools in group [{0}] enabled!</value>
+  </data>
+  <data name="McpTools_Group_DisabledAlert" xml:space="preserve">
+    <value>❌ All tools in group [{0}] disabled!</value>
+  </data>
+  <data name="ThoughtsAndStatsButton" xml:space="preserve">
+    <value>🧠 Thoughts &amp; Stats</value>
+  </data>
+  <data name="CopyDiagnosticPrompt" xml:space="preserve">
+    <value>Hello, Antigravity! Please analyze this production bot session.
+Execute the following command in your terminal to retrieve the HTML dashboard containing my internal reasoning thoughts and detailed MCP tool execution logs:
+
+{0}
+
+Dashboard link: {1}</value>
+  </data>
+  <data name="CopyForAiButtonText" xml:space="preserve">
+    <value>📋 Copy for AI Assistant (Antigravity)</value>
+  </data>
+  <data name="CopySuccessToastText" xml:space="preserve">
+    <value>Prompt copied successfully! Send it to Antigravity in chat.</value>
+  </data>
+</root>

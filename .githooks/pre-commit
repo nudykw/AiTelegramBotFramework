@@ -1,0 +1,45 @@
+#!/bin/bash
+set -e
+
+# Цвета для вывода сообщений
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+NC='\033[0;68m' # Без цвета
+NC_RESET='\033[0m'
+
+# Получаем имя текущей ветки
+CURRENT_BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --abbrev-ref HEAD)
+
+echo -e "${BLUE}=== Git Pre-Commit Hook: Checking Branch '$CURRENT_BRANCH' ===${NC_RESET}"
+
+if [ "$CURRENT_BRANCH" = "main" ]; then
+    echo -e "${YELLOW}→ Committing to 'main' branch. Running Unit Tests...${NC_RESET}"
+    
+    if dotnet test tests/ServiceLayer.UnitTests/ServiceLayer.UnitTests.csproj -c Release; then
+        echo -e "${GREEN}✓ Unit Tests passed successfully on 'main'! Commit allowed.${NC_RESET}"
+    else
+        echo -e "${RED}✗ Unit Tests failed on 'main'! Commit aborted.${NC_RESET}"
+        exit 1
+    fi
+
+elif [ "$CURRENT_BRANCH" = "prod" ]; then
+    echo -e "${YELLOW}→ Committing/Merging to 'prod' branch. Running Unit and Integration Tests...${NC_RESET}"
+    
+    echo -e "${BLUE}[1/2] Running Unit Tests...${NC_RESET}"
+    if ! dotnet test tests/ServiceLayer.UnitTests/ServiceLayer.UnitTests.csproj -c Release; then
+        echo -e "${RED}✗ Unit Tests failed on 'prod'! Commit aborted.${NC_RESET}"
+        exit 1
+    fi
+    
+    echo -e "${BLUE}[2/2] Running Integration Tests (requires running Docker)...${NC_RESET}"
+    if ! dotnet test tests/ServiceLayer.IntegrationTests/ServiceLayer.IntegrationTests.csproj -c Release; then
+        echo -e "${RED}✗ Integration Tests failed on 'prod'! Commit aborted.${NC_RESET}"
+        exit 1
+    fi
+    
+    echo -e "${GREEN}✓ All tests (Unit & Integration) passed successfully on 'prod'! Commit allowed.${NC_RESET}"
+else
+    echo -e "→ Branch '$CURRENT_BRANCH' does not require pre-commit tests. Commit allowed."
+fi

@@ -1,0 +1,50 @@
+{
+  "AppSettings": {
+    "TelegramBotConfiguration": {
+      "BotToken": "[YOUR_TELEGRAM_BOT_TOKEN]",
+      "OwnerId": 0,
+      "DefaultParseMode": "Html",
+      "InitialBalance": 0.1,
+      "AiSettings": {
+        "Vision": {
+          "ModelName": "gpt-4o",
+          "ProviderName": "OpenAI"
+        },
+        "Drawing": {
+          "ModelName": "dall-e-3",
+          "ProviderName": "OpenAI"
+        },
+        "Classification": {
+          "ModelName": "gpt-4o",
+          "ProviderName": "OpenAI"
+        },
+        "ChatProviders": [
+          {
+            "Name": "OpenAI",
+            "ProviderType": "OpenAI",
+            "ApiKey": "[YOUR_OPENAI_API_KEY]",
+            "ModelName": "gpt-4o-mini"
+          },
+          {
+            "Name": "Gemini",
+            "ProviderType": "Gemini",
+            "ApiKey": "[YOUR_GEMINI_API_KEY]",
+            "ModelName": "gemini-2.0-flash"
+          }
+        ]
+      }
+    },
+    "Database": {
+      "Provider": "PostgreSql",
+      "ConnectionString": "Host=localhost;Database=gpt_chat_bot;Username=postgres;Password=password"
+    },
+    "GoogleDriveSettings": {
+      "AuthType": "OAuth",
+      "ServiceAccountKeyPath": ".secrets/.credentials.json",
+      "ClientSecretsPath": ".secrets/.gdrive-server-credentials.json",
+      "TokenStorePath": ".secrets/token_store",
+      "RootFolderTemplate": "AppWorkspace_{UserId}",
+      "DefaultUserId": "default"
+    }
+  }
+}

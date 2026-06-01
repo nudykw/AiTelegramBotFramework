@@ -1,0 +1,27 @@
+{
+  "folders": {},
+  "connections": {
+    "postgres-gpt-bot": {
+      "id": "postgres-gpt-bot",
+      "provider": "postgresql",
+      "driver": "postgres-jdbc",
+      "name": "GPT Bot Database (PostgreSQL)",
+      "description": "Auto-configured connection to the GPT Telegram Bot PostgreSQL database",
+      "saveCredentials": true,
+      "authModelId": "native",
+      "configuration": {
+        "host": "postgres",
+        "port": "5432",
+        "database": "gpt_chat_bot",
+        "userName": "postgres",
+        "userPassword": "postgres_secret_change_me",
+        "properties": {
+          "loginTimeout": "5"
+        },
+        "providerProperties": {
+          "@dbeaver-show-non-default-db@": "false"
+        }
+      }
+    }
+  }
+}

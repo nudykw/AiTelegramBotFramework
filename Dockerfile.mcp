@@ -1,0 +1,18 @@
+FROM node:lts-alpine
+
+# Install dependencies for Puppeteer/Chromium
+RUN apk add --no-cache \
+      chromium \
+      nss \
+      freetype \
+      harfbuzz \
+      ca-certificates \
+      ttf-freefont \
+      git
+
+# Tell Puppeteer to skip installing Chrome. We will use the installed package.
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+# Keep container running
+CMD ["tail", "-f", "/dev/null"]

@@ -1,0 +1,47 @@
+MIT License with Ethical Peace Protest Clause
+
+Copyright (c) 2026 nudykw
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+In addition, any use, distribution, modification, or sublicense of this
+Software is subject to the following additional ethical conditions:
+
+1. ETHICAL PEACE PROTEST CLAUSE
+   As a peaceful humanitarian protest against the unprovoked military aggression,
+   violence, and invasion of Ukraine by the Russian Federation, and in memory of
+   the tragic lessons of history regarding state-sponsored violence and war crimes:
+   
+   a) This Software, any of its components, derivatives, or modifications, MUST NOT
+      be translated, localized, or otherwise adapted into the Russian language within
+      any user interface, configuration, resource files, or user-facing documentation.
+   b) Any public or private deployment of this Software or its derivatives MUST NOT
+      present a Russian language user interface to its users.
+   c) This restriction (Section 1) shall be automatically repealed and rendered null
+      and void only upon the complete cessation of all military activities by the
+      Russian Federation against Ukraine, the full and verifiable withdrawal of all
+      Russian military forces, personnel, and proxies from all internationally
+      recognized territories of Ukraine as of 1991 (including Crimea and Donbas),
+      and the full settlement of war reparations to Ukraine.
+
+2. ATTRIBUTION REQUIREMENT
+   Any fork, redistribution, or modification of this Software, whether public or
+   private, MUST preserve and display a prominent, active backlink to the official
+   public repository of the parent framework:
+   https://github.com/nudykw/AiTelegramBotFramework
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
