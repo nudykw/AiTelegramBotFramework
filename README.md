@@ -151,6 +151,23 @@ You have successfully completed all the initial setup steps. Now, alongside your
 
 ---
 
+## 🛡️ Security & Code Quality Auditing
+
+This project is actively monitored and verified using modern static application security testing (SAST) and software composition analysis (SCA) tooling:
+
+### 🏅 Security Status Badges
+At the top of this document, you will see two security badges:
+- **CodeQL Status (`CodeQL`)**: Powered by GitHub Actions native CodeQL engine. A green **`passing`** badge indicates that the C# source code does not contain potential security vulnerabilities (such as command injections, buffer overflows, or authentication bypasses).
+- **Snyk Vulnerabilities (`Known Vulnerabilities`)**: Monitored by Snyk. It dynamically displays the count of known vulnerabilities in referenced NuGet and NPM dependencies. A grey/green **`0 vulnerabilities`** status ensures all packages are fully patched.
+
+### ⚙️ Local Security Auditing
+To maintain this baseline, verification checks are integrated locally into development workflows:
+1. **Roslyn Security Analyzers**: Runs automatically on every compilation. Confirms that C# security diagnostics (like SQL Injection checks `CA2100`) pass cleanly.
+2. **Microsoft DevSkim Scan**: Scans the codebase locally for cryptography issues and exposed secrets. Configured to run on every commit via the **`pre-commit`** Git hook.
+3. **Snyk CLI Dependency Scan**: Verifies NuGet & NPM dependencies. Configured to run before pushing to main or production branches via the **`pre-push`** Git hook.
+
+---
+
 ## ⚖️ License
 
 Distributed under the **MIT License with Ethical Peace Protest Clause**.
