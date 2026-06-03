@@ -96,6 +96,13 @@ All configuration settings are managed in a `.env` file. Instead of copying and 
 - **Option 1 (If you already have all the keys)**: *"Here is my bot token: `[TOKEN]`, Telegram ID: `[ID]`, and Gemini key: `[KEY]`. Please copy `.env.example` to `.env` and configure these credentials for me."*
 - **Option 2 (Interactive guided setup - AI will hold your hand)**: *"Hello! Help me set up the `.env` configuration file for this bot. Guide me step-by-step: ask for each required token or key one by one, explain exactly where to get them, and then create the `.env` file for me."*
 
+> [!WARNING]
+> **Security & AI Agent Key Usage Guidelines:**
+> 1. **Use Free/Trial Keys for Development & Testing:** It is strongly recommended to use free tier or low-limit/trial API keys from AI providers when sharing them with an IDE Coding Agent. This ensures your main billing accounts are never compromised.
+> 2. **Manual Configuration on Production:** Never share or pass your production secret keys to the IDE Coding Agent. On your production server, manually create your own `.env` file and fill it out yourself by referencing the testing/example configuration template.
+> 3. **Production Telemetry Daemon Security:** The background debugging/telemetry daemon (`prod-mcp-gateway.js`) used for production analysis runs locally on your machine and communicates over Tailscale. It does **not** have access to the production server's file system and cannot read your production `.env` file or secret keys. Thus, it cannot retrieve them for the agent.
+
+
 ### 5. Launch in [Docker](https://www.docker.com/) ([Windows](https://docs.docker.com/desktop/setup/install/windows/), [macOS](https://docs.docker.com/desktop/setup/install/mac/), [Linux](https://docs.docker.com/engine/install/))
 Spin up the containers with the bot, [PostgreSQL](https://www.postgresql.org/) database, and [CloudBeaver](https://cloudbeaver.io/) web console using one of these options:
 - **Ask your AI agent**: *"Please start the project's Docker containers and show me the bot's execution logs."*
