@@ -491,7 +491,9 @@ namespace ServiceLayer.Services.Mcp
             }
 
             using var command = connection.CreateCommand();
+#pragma warning disable CA2100 // Dynamic SQL is intentional for admin query tool
             command.CommandText = sql;
+#pragma warning restore CA2100
             using var reader = await command.ExecuteReaderAsync();
             dataTable.Load(reader);
             return dataTable;

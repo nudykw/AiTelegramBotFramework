@@ -2533,7 +2533,9 @@ public class UpdateHandler : BaseService, IUpdateHandler
 
                 using (var command = connection.CreateCommand())
                 {
+#pragma warning disable CA2100 // Dynamic SQL is intentional for admin pagination
                     command.CommandText = finalSql;
+#pragma warning restore CA2100
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         dataTable.Load(reader);

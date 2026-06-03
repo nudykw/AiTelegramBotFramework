@@ -1,0 +1,5 @@
+root = true
+
+[*.cs]
+# Roslyn Security Rules
+dotnet_analyzer_diagnostic.category-Security.severity = warning

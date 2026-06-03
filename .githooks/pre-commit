@@ -14,6 +14,14 @@ CURRENT_BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --ab
 
 echo -e "${BLUE}=== Git Pre-Commit Hook: Checking Branch '$CURRENT_BRANCH' ===${NC_RESET}"
 
+# Run DevSkim local security checks
+echo -e "${BLUE}→ Running Microsoft DevSkim local security scan...${NC_RESET}"
+if ! DOTNET_ROLL_FORWARD=Major devskim analyze -I . -f text --skip-git-ignored-files --ignore-rule-ids DS126858,DS162092,DS137138,DS172411,DS176209 -E; then
+    echo -e "${RED}✗ DevSkim detected potential security issues! Commit aborted.${NC_RESET}"
+    exit 1
+fi
+echo -e "${GREEN}✓ DevSkim security check passed.${NC_RESET}"
+
 if [ "$CURRENT_BRANCH" = "main" ]; then
     echo -e "${YELLOW}→ Committing to 'main' branch. Running Unit Tests...${NC_RESET}"
     

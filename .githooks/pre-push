@@ -23,6 +23,15 @@ done
 
 if [ "$RUN_PROD_TESTS" = true ]; then
     echo -e "${BLUE}=== Git Pre-Push Hook: Pushing to 'prod' ===${NC_RESET}"
+    
+    # Run Snyk security scans on dependencies
+    echo -e "${BLUE}→ Running Snyk dependency security scan...${NC_RESET}"
+    if ! npx snyk test --all-projects; then
+        echo -e "${RED}✗ Snyk detected vulnerability issues! Push aborted.${NC_RESET}"
+        exit 1
+    fi
+    echo -e "${GREEN}✓ Snyk dependency check passed.${NC_RESET}"
+
     echo -e "${YELLOW}→ Running Unit and Integration Tests...${NC_RESET}"
     
     echo -e "${BLUE}[1/2] Running Unit Tests...${NC_RESET}"
@@ -41,6 +50,15 @@ if [ "$RUN_PROD_TESTS" = true ]; then
 
 elif [ "$RUN_MAIN_TESTS" = true ]; then
     echo -e "${BLUE}=== Git Pre-Push Hook: Pushing to 'main' ===${NC_RESET}"
+    
+    # Run Snyk security scans on dependencies
+    echo -e "${BLUE}→ Running Snyk dependency security scan...${NC_RESET}"
+    if ! npx snyk test --all-projects; then
+        echo -e "${RED}✗ Snyk detected vulnerability issues! Push aborted.${NC_RESET}"
+        exit 1
+    fi
+    echo -e "${GREEN}✓ Snyk dependency check passed.${NC_RESET}"
+
     echo -e "${YELLOW}→ Running Unit Tests...${NC_RESET}"
     
     if dotnet test tests/ServiceLayer.UnitTests/ServiceLayer.UnitTests.csproj -c Release; then
