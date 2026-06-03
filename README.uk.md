@@ -6,6 +6,9 @@
 
 🇺🇸 [English](README.md) | 🇺🇦 **Українська**
 
+[![CodeQL Status](https://github.com/nudykw/AiTelegramBotFramework/actions/workflows/codeql.yml/badge.svg)](https://github.com/nudykw/AiTelegramBotFramework/actions/workflows/codeql.yml)
+[![Known Vulnerabilities](https://snyk.io/test/github/nudykw/AiTelegramBotFramework/badge.svg)](https://snyk.io/test/github/nudykw/AiTelegramBotFramework)
+
 </div>
 
 ---
