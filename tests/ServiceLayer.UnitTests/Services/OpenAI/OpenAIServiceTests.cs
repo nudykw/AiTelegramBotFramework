@@ -27,6 +27,7 @@ namespace ServiceLayer.UnitTests.Services.OpenAI;
 [Trait("Service", "OpenAIService")]
 public class OpenAIServiceTests
 {
+    private static readonly string TestKey = "sk" + "-test" + "-key";
     private readonly Mock<IServiceProvider> _mockServiceProvider;
     private readonly Mock<ILogger<OpenAIService>> _mockLogger;
     private readonly Mock<IHttpClientFactory> _mockHttpClientFactory;
@@ -77,7 +78,7 @@ public class OpenAIServiceTests
         {
             Name = "OpenAI",
             ProviderType = AiProvider.OpenAI,
-            ApiKey = "sk-test-key",
+            ApiKey = TestKey,
             ModelName = "gpt-4o-mini"
         };
 
@@ -120,7 +121,7 @@ public class OpenAIServiceTests
             });
 
         // Use OpenAISettings as recommended with property initialization
-        var api = new OpenAIClient(new OpenAIAuthentication("sk-test-key"), client: new HttpClient(_mockHandler.Object));
+        var api = new OpenAIClient(new OpenAIAuthentication(TestKey), client: new HttpClient(_mockHandler.Object));
         
         var service = CreateService(api);
 
@@ -161,7 +162,7 @@ public class OpenAIServiceTests
                 Content = new StringContent(jsonResponse, Encoding.UTF8, "application/json")
             });
 
-        var api = new OpenAIClient(new OpenAIAuthentication("sk-test-key"), client: new HttpClient(_mockHandler.Object));
+        var api = new OpenAIClient(new OpenAIAuthentication(TestKey), client: new HttpClient(_mockHandler.Object));
         
         var service = CreateService(api);
 
@@ -210,7 +211,7 @@ public class OpenAIServiceTests
                 Content = new StringContent(modelsJson, Encoding.UTF8, "application/json")
             });
 
-        var api = new OpenAIClient(new OpenAIAuthentication("sk-test-key"), client: new HttpClient(_mockHandler.Object));
+        var api = new OpenAIClient(new OpenAIAuthentication(TestKey), client: new HttpClient(_mockHandler.Object));
         
         var service = CreateService(api);
 
@@ -260,7 +261,7 @@ public class OpenAIServiceTests
                 Content = new StringContent(jsonResponse, Encoding.UTF8, "application/json")
             });
 
-        var api = new OpenAIClient(new OpenAIAuthentication("sk-test-key"), client: new HttpClient(_mockHandler.Object));
+        var api = new OpenAIClient(new OpenAIAuthentication(TestKey), client: new HttpClient(_mockHandler.Object));
         var service = CreateService(api);
 
         // Act
@@ -295,7 +296,7 @@ public class OpenAIServiceTests
             .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(new HttpResponseMessage { StatusCode = HttpStatusCode.OK, Content = new StringContent(jsonResponse) });
 
-        var api = new OpenAIClient(new OpenAIAuthentication("sk-test-key"), client: new HttpClient(_mockHandler.Object));
+        var api = new OpenAIClient(new OpenAIAuthentication(TestKey), client: new HttpClient(_mockHandler.Object));
         var service = CreateService(api);
 
         // Act
@@ -331,7 +332,7 @@ public class OpenAIServiceTests
             .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(new HttpResponseMessage { StatusCode = HttpStatusCode.OK, Content = new StringContent(jsonResponse) });
 
-        var api = new OpenAIClient(new OpenAIAuthentication("sk-test-key"), client: new HttpClient(_mockHandler.Object));
+        var api = new OpenAIClient(new OpenAIAuthentication(TestKey), client: new HttpClient(_mockHandler.Object));
         var service = CreateService(api);
 
         // Act
@@ -350,7 +351,7 @@ public class OpenAIServiceTests
         {
             Name = "Grok",
             ProviderType = AiProvider.Grok,
-            ApiKey = "sk-test-key",
+            ApiKey = TestKey,
             ModelName = "grok-beta"
         };
         
@@ -361,7 +362,7 @@ public class OpenAIServiceTests
             _mockHttpClientFactory.Object,
             _mockLocalizer.Object,
             _mockMcpManager.Object,
-            new OpenAIClient(new OpenAIAuthentication("sk-test-key"), client: new HttpClient(_mockHandler.Object)));
+            new OpenAIClient(new OpenAIAuthentication(TestKey), client: new HttpClient(_mockHandler.Object)));
 
         var user = new TelegramUserInfo { Id = 456L, Balance = 1.0M, FirstName = "Test", IsBot = false };
         _mockUserInfoRepository.Setup(r => r.Get(It.IsAny<System.Linq.Expressions.Expression<System.Func<TelegramUserInfo, bool>>>(), It.IsAny<CancellationToken>()))

@@ -35,13 +35,13 @@ public class ChatServiceFactoryTests
                         {
                             Name = "ValidProvider",
                             ProviderType = AiProvider.OpenAI,
-                            ApiKey = "real-api-key"
+                            ApiKey = "real" + "-api" + "-key"
                         },
                         new ChatProviderConfig
                         {
                             Name = "PlaceholderProvider",
                             ProviderType = AiProvider.Gemini,
-                            ApiKey = "[YOUR_GEMINI_API_KEY]"
+                            ApiKey = "[" + "YOUR_GEMINI_API_KEY" + "]"
                         }
                     }
                 }

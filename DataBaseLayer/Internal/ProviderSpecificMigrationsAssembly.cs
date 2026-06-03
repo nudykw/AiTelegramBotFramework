@@ -21,6 +21,7 @@ public class ProviderSpecificMigrationsAssembly : MigrationsAssembly
         IDiagnosticsLogger<DbLoggerCategory.Migrations> logger)
         : base(currentContext, options, idGenerator, logger)
     {
+        ArgumentNullException.ThrowIfNull(currentContext);
         _context = currentContext.Context;
     }
 

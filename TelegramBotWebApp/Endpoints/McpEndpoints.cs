@@ -186,6 +186,12 @@ public static class McpEndpoints
             var args = JsonSerializer.Deserialize<string[]>(tool.Args) ?? Array.Empty<string>();
             var env = JsonSerializer.Deserialize<Dictionary<string, string?>>(tool.EnvVars) ?? new();
 
+            var allowedCommands = new[] { "npx", "node", "docker" };
+            if (string.IsNullOrWhiteSpace(tool.Command) || !allowedCommands.Contains(tool.Command))
+            {
+                return Results.BadRequest("Invalid command. Only 'npx', 'node', and 'docker' are allowed.");
+            }
+
             var runtimeContainer = Environment.GetEnvironmentVariable("MCP_RUNTIME_CONTAINER");
             var command = tool.Command;
             var finalArgs = new List<string>(args);

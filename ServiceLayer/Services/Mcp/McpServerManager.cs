@@ -72,6 +72,13 @@ public class McpServerManager
                 var args = JsonSerializer.Deserialize<string[]>(tool.Args) ?? Array.Empty<string>();
                 var env = JsonSerializer.Deserialize<Dictionary<string, string?>>(tool.EnvVars) ?? new();
 
+                var allowedCommands = new[] { "npx", "node", "docker" };
+                if (string.IsNullOrWhiteSpace(tool.Command) || !allowedCommands.Contains(tool.Command))
+                {
+                    _logger.LogError("🚨 Invalid command '{Command}' for MCP tool '{Name}'. Only 'npx', 'node', and 'docker' are allowed.", tool.Command, tool.Name);
+                    continue;
+                }
+
                 var runtimeContainer = Environment.GetEnvironmentVariable("MCP_RUNTIME_CONTAINER");
                 var command = tool.Command;
                 var finalArgs = args;

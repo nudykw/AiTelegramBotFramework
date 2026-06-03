@@ -3,3 +3,12 @@ root = true
 [*.cs]
 # Roslyn Security Rules
 dotnet_analyzer_diagnostic.category-Security.severity = warning
+
+# Global naming modifications
+dotnet_diagnostic.CA1711.severity = none
+
+# Disable styling and naming rules for EF Core Migrations
+[**/Migrations/**.cs]
+dotnet_diagnostic.CA1707.severity = none
+dotnet_diagnostic.CA1062.severity = none
+

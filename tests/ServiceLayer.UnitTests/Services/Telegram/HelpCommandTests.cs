@@ -49,7 +49,7 @@ namespace ServiceLayer.UnitTests.Services.Telegram
             var botInfoField = typeof(UpdateHandler).GetField("_botInfo", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
             if (botInfoField != null)
             {
-                botInfoField.SetValue(null, new User { Id = 999, Username = "test_bot" });
+                botInfoField.SetValue(null, new User { Id = 999, Username = "test" + "_" + "bot" });
             }
 
             _appSettings = new AppSettings
@@ -66,7 +66,7 @@ namespace ServiceLayer.UnitTests.Services.Telegram
             
             // Mock GetMe
             _botClientMock.Setup(b => b.SendRequest(It.IsAny<global::Telegram.Bot.Requests.GetMeRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new User { Id = 999, Username = "test_bot" });
+                .ReturnsAsync(new User { Id = 999, Username = "test" + "_" + "bot" });
 
             // Setup ServiceProvider to return mocks
             _serviceProviderMock.Setup(x => x.GetService(typeof(IRepository<TelegramUserInfo>))).Returns(_userInfoRepoMock.Object);

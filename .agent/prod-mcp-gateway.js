@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const net = require('net');
 const http = require('http');
+const https = require('https');
 
 const projectRoot = path.resolve(__dirname, '..');
 
@@ -348,11 +349,12 @@ function formatAsMarkdownTable(rows) {
   return [headerLine, sepLine, ...rowLines].join('\n');
 }
 
-// HTTP helper for Aspire REST API queries
+// HTTP/HTTPS helper for Aspire REST API queries
 function fetchAspireApi(path) {
   return new Promise((resolve, reject) => {
     const url = `${aspirePublicUrl}${path}`;
-    const req = http.get(url, (res) => {
+    const clientModule = url.startsWith('https:') ? https : http;
+    const req = clientModule.get(url, (res) => {
       let data = '';
       res.on('data', chunk => { data += chunk; });
       res.on('end', () => {

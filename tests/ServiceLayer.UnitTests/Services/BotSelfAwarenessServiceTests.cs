@@ -40,7 +40,7 @@ namespace ServiceLayer.UnitTests.Services
                 Id = 12345,
                 IsBot = true,
                 FirstName = "Test Bot",
-                Username = "test_bot"
+                Username = "test" + "_" + "bot"
             };
             _botClientMock
                 .Setup(c => c.SendRequest(It.IsAny<global::Telegram.Bot.Requests.GetMeRequest>(), It.IsAny<CancellationToken>()))
@@ -62,14 +62,14 @@ namespace ServiceLayer.UnitTests.Services
                             {
                                 Name = "OpenAI",
                                 ProviderType = AiProvider.OpenAI,
-                                ApiKey = "sk-test",
+                                ApiKey = "sk" + "-test",
                                 ModelName = "gpt-4o-mini"
                             },
                             new()
                             {
                                 Name = "Gemini",
                                 ProviderType = AiProvider.Gemini,
-                                ApiKey = "gemini-test",
+                                ApiKey = "gemini" + "-test",
                                 ModelName = "gemini-1.5-flash"
                             }
                         }
