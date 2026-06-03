@@ -113,12 +113,12 @@ Add the `GoogleDriveSettings` block under `AppSettings` in `appsettings.json` or
 
 ## 🔒 Production Telemetry & DB MCP Gateway (IDE Development Tool)
 
-For IDE-based development (e.g. Cursor, VS Code, Windsurf), we provide a secure, developer-controlled MCP server (`.agent/prod-mcp-gateway.js`) that allows your IDE agents to safely query the production PostgreSQL database and retrieve .NET Aspire logs over Tailscale, purely via structured APIs.
+For IDE-based development (e.g. Cursor, VS Code, Windsurf), we provide a secure, developer-controlled MCP server (`.agent/prod-mcp-gateway.js`) that allows your IDE agents to safely query the production PostgreSQL database and retrieve .NET Aspire logs over [Tailscale](https://tailscale.com/), purely via structured APIs.
 
 ### 🛡️ Core Features & Safeguards
 1. **Explicit Daemon Activation**: The gateway will **never** automatically connect to production. You must explicitly start it by running `node .agent/prod-mcp-gateway.js --daemon` in your terminal. When the daemon is off, the IDE client returns zero tools.
 2. **Double-Layered SQL Sandbox**: The database query tool only executes `SELECT`, `EXPLAIN`, `SHOW`, or `DESCRIBE` statements, and enforces a word-boundary regex blocklist preventing any chained or nested modification statements (like `INSERT`, `UPDATE`, `DELETE`, `DROP`).
-3. **Tailscale Network Dependency**: Connects securely to the private Wireguard Tailscale IP of your server (`100.82.239.59`). If Tailscale is disconnected, all requests immediately fail safely.
+3. **[Tailscale](https://tailscale.com/) Network Dependency**: Connects securely to the private Wireguard [Tailscale](https://tailscale.com/) IP of your server (`100.82.239.59`). If [Tailscale](https://tailscale.com/) is disconnected, all requests immediately fail safely.
 
 ### 🛠️ Exposed Tools for IDE Agents
 1. `query_prod_database(sql)` — Safely executes a read-only query against the production DB and returns a clean, formatted Markdown table.
@@ -126,7 +126,7 @@ For IDE-based development (e.g. Cursor, VS Code, Windsurf), we provide a secure,
 3. `get_prod_resources()` — Lists all running production services and their states registered in the .NET Aspire Dashboard.
 
 ### 🚀 Setup & Usage
-1. Connect to **Tailscale** on your local machine.
+1. Connect to **[Tailscale](https://tailscale.com/)** on your local machine.
 2. Ensure the remote Aspire Dashboard REST API is enabled on your production server by adding `DASHBOARD__API__DISABLED: "false"` to the `aspire-dashboard` environment variables in `docker-compose.yml` and redeploying.
 3. Run the gateway daemon in your terminal:
    ```bash

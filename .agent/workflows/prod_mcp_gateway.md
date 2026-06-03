@@ -1,10 +1,10 @@
 ---
-description: Run the background production MCP gateway (prod-mcp-gateway.js) to access logs and DB on production via Tailscale
+description: Run the background production MCP gateway (prod-mcp-gateway.js) to access logs and DB on production via [Tailscale](https://tailscale.com/)
 ---
 
 # 🔒 Running the Production MCP Gateway (prod-mcp-gateway.js)
 
-This workflow is designed to start the background MCP gateway daemon, which allows IDE agents to securely read .NET Aspire dashboard logs and send SELECT queries to the production PostgreSQL database over the Tailscale network.
+This workflow is designed to start the background MCP gateway daemon, which allows IDE agents to securely read .NET Aspire dashboard logs and send SELECT queries to the production PostgreSQL database over the [Tailscale](https://tailscale.com/) network.
 
 When invoking this workflow, perform the following actions:
 

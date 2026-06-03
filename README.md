@@ -33,6 +33,18 @@
 
 ---
 
+## 📋 Table of Contents
+
+- [✨ Key Features](#-key-features)
+- [📐 System Architecture](#-system-architecture)
+- [🚀 Quick Start](#-quick-start)
+- [🤖 Bot Commands](#-bot-commands)
+- [📂 Documentation Directory](#-documentation-directory)
+- [🛡️ Security & Code Quality Auditing](#-security--code-quality-auditing)
+- [⚖️ License](#-license)
+
+---
+
 ## 📐 System Architecture
 
 ```mermaid
@@ -103,7 +115,7 @@ All configuration settings are managed in a `.env` file. Instead of copying and 
 > **Security & AI Agent Key Usage Guidelines:**
 > 1. **Use Free/Trial Keys for Development & Testing:** It is strongly recommended to use free tier or low-limit/trial API keys from AI providers when sharing them with an IDE Coding Agent. This ensures your main billing accounts are never compromised.
 > 2. **Manual Configuration on Production:** Never share or pass your production secret keys to the IDE Coding Agent. On your production server, manually create your own `.env` file and fill it out yourself by referencing the testing/example configuration template.
-> 3. **Production Telemetry Daemon Security:** The background debugging/telemetry daemon (`prod-mcp-gateway.js`) used for production analysis runs locally on your machine and communicates over Tailscale. It does **not** have access to the production server's file system and cannot read your production `.env` file or secret keys. Thus, it cannot retrieve them for the agent.
+> 3. **Production Telemetry Daemon Security:** The background debugging/telemetry daemon (`prod-mcp-gateway.js`) used for production analysis runs locally on your machine and communicates over [Tailscale](https://tailscale.com/). It does **not** have access to the production server's file system and cannot read your production `.env` file or secret keys. Thus, it cannot retrieve them for the agent.
 
 
 ### 5. Launch in [Docker](https://www.docker.com/) ([Windows](https://docs.docker.com/desktop/setup/install/windows/), [macOS](https://docs.docker.com/desktop/setup/install/mac/), [Linux](https://docs.docker.com/engine/install/))
@@ -156,9 +168,25 @@ You have successfully completed all the initial setup steps. Now, alongside your
 This project is actively monitored and verified using modern static application security testing (SAST) and software composition analysis (SCA) tooling:
 
 ### 🏅 Security Status Badges
+![Security Badges](docs/assets/security-badges.png)
+
 At the top of this document, you will see two security badges:
-- **CodeQL Status (`CodeQL`)**: Powered by GitHub Actions native CodeQL engine. A green **`passing`** badge indicates that the C# source code does not contain potential security vulnerabilities (such as command injections, buffer overflows, or authentication bypasses).
-- **Snyk Vulnerabilities (`Known Vulnerabilities`)**: Monitored by Snyk. It dynamically displays the count of known vulnerabilities in referenced NuGet and NPM dependencies. A grey/green **`0 vulnerabilities`** status ensures all packages are fully patched.
+- **CodeQL Status (`CodeQL`)**: Powered by [GitHub Actions native CodeQL engine](https://codeql.github.com/). A green **`passing`** badge indicates that the C# source code does not contain potential security vulnerabilities (such as command injections, buffer overflows, or authentication bypasses).
+- **Snyk Vulnerabilities (`Snyk security`)**: Monitored by [Snyk](https://snyk.io/). It dynamically displays the status of known vulnerabilities and license issues in referenced NuGet and NPM dependencies. A passing status ensures all packages are fully patched.
+
+> [!WARNING]
+> **Static verification does NOT guarantee runtime execution safety!**
+> 
+> Even with passing security scans, this project should **NOT** be launched blindly or exposed to untrusted environments without precautions due to:
+> 1. **Dynamic AI Agent Behavior:** The Model Context Protocol (MCP) allows AI agents to dynamically execute terminal commands (e.g. `npx`), query databases, and read/write files. Whitelists prevent arbitrary shell injection, but logical misconfigurations can still occur.
+> 2. **Prompt Injection Risks:** Attackers can perform prompt injections via Telegram chat to trick the LLM into abusing tools (e.g. executing commands or viewing files on the host).
+> 3. **Privilege Escalation:** Running without a container sandbox (Docker) may allow agents to read sensitive local files or execute code on the host machine.
+> 
+> **Safest Way to Run & Test:**
+> * **Containerize Everything:** Always run the application inside isolated Docker containers (using the provided [docker-compose.yml](docker-compose.yml) as detailed in the [Docker Deployment Guide](docs/DOCKER.md)) so that files and command executions are sandboxed.
+> * **Strict API Budgets:** Use separate API keys (OpenAI, Gemini, etc.) dedicated only to testing, and configure strict spending/rate limits in your AI provider console.
+> * **Least Privilege DB access:** Restrict database users used by MCP query tools to read-only permissions (`SELECT` only).
+> * **Secure [Tailscale](https://tailscale.com/) Tunneling:** Run the production telemetry gateway (`prod-mcp-gateway.js`) only on isolated virtual private networks (like [Tailscale](https://tailscale.com/)) and never bind it to public internet interfaces.
 
 ### ⚙️ Local Security Auditing
 To maintain this baseline, verification checks are integrated locally into development workflows:
